@@ -69,7 +69,7 @@ public class Main extends Application {
                 errorPass.setText("");
 
             } else {
-                if (remember.isSelected()) {
+                if (remember.isSelected()&&!name.getText().isEmpty()&&!pass.getText().isEmpty()) {
                     try {
                         FileReader.saveCredentials(name.getText(), pass.getText());
                     } catch (IOException e) {
@@ -98,7 +98,7 @@ public class Main extends Application {
     }
 
 
-//test
+
     public static void main(String[] args) {
         launch(args);
     }

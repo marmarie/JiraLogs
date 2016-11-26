@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * Created by ali.naffaa on 23.11.2016.
  */
 public class JiraRestSimple {
-    private static final String JIRA_URL = "https://jira.ringcentral.com";
+    private static final String JIRA_URL = "";
     private static final String JIRA_ADMIN_USERNAME = "";
     private static final String JIRA_ADMIN_PASSWORD = "";
 
@@ -28,6 +28,7 @@ public class JiraRestSimple {
         for(Issue issue:result){
             client.getIssueClient().addWorklog(issue.getWorklogUri(),new WorklogInputBuilder(issue.getSelf()).setStartDate(new DateTime()).setComment("updated").setMinutesSpent(1).build()).claim();
         }
+        System.exit(0);
     }
 }
 

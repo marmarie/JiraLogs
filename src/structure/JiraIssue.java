@@ -1,5 +1,7 @@
 package structure;
 
+import org.joda.time.DateTime;
+
 import java.util.LinkedHashMap;
 
 /**
@@ -8,7 +10,15 @@ import java.util.LinkedHashMap;
 public class JiraIssue {
 
     String id;
-    LinkedHashMap<String, String> workLogs;
+
+
+
+
+    public void setWorkLogs(LinkedHashMap<DateTime, String> workLogs) {
+        this.workLogs = workLogs;
+    }
+
+    LinkedHashMap<DateTime, String> workLogs;
 
     public String getId() {
         return id;
@@ -18,21 +28,22 @@ public class JiraIssue {
         this.id = id;
     }
 
-    public LinkedHashMap<String, String> getWorkLogs() {
-        return workLogs;
-    }
-
-    public void setWorkLogs(LinkedHashMap<String, String> workLogs) {
-        this.workLogs = workLogs;
-    }
-
-    public JiraIssue(String id, LinkedHashMap<String, String> workLogs) {
-        this.id = id;
-        this.workLogs = workLogs;
-    }
     public JiraIssue() {
         id ="";
         workLogs = new LinkedHashMap<>();
+    }
+
+    public JiraIssue(String id, LinkedHashMap<DateTime, String> workLogs) {
+        this.id = id;
+        this.workLogs = workLogs;
+    }
+
+    public LinkedHashMap<DateTime, String> getWorkLogs() {
+        return workLogs;
+    }
+
+    public void addWorkLog(DateTime dateTime, String text){
+        workLogs.put(dateTime,text);
     }
 
 }

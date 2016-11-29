@@ -19,7 +19,10 @@ public class Client {
     public static JSONObject makeJSON(String date, String time) throws JSONException {
         JSONObject f = new JSONObject();
         f.put("started", date);
-        f.put("timeSpent", time);
+        if(time.contains("s"))
+            f.put("timeSpentSeconds", time.replace("s",""));
+        else
+            f.put("timeSpent", time);
         return f;
     }
 
@@ -44,13 +47,24 @@ public class Client {
     }
 
     public static boolean logWork(String issueToLog, String date, String time) throws JSONException, IOException {
-
         String credentials = "";
         HashMap<String,String> headersMap = new HashMap<>();
         headersMap.put("Content-Type","application/json");
         headersMap.put("Authorization", "Basic " + credentials);
         return getPost(headersMap,"https://jira.ringcentral.com/rest/api/latest/issue/"+issueToLog+"/worklog", makeJSON(date, time));
 
+    }
+
+    public static void logWork(String credentials, JiraIssue jiraIssue) throws JSONException, IOException {
+        HashMap<String,String> headersMap = new HashMap<>();
+        headersMap.put("Content-Type","application/json");
+        headersMap.put("Authorization", "Basic " + credentials);
+        for(String dateIssue : jiraIssue.getWorkLogs().keySet()) {
+            String time = jiraIssue.getWorkLogs().get(dateIssue);
+            System.out.println("log to "+jiraIssue.getId()+" date = " +dateIssue +" time to log="+time);
+            getPost(headersMap, "https://jira.ringcentral.com/rest/api/latest/issue/" + jiraIssue.getId() + "/worklog", makeJSON(dateIssue+"T15:01:00.000+0000", time+"s"));
+
+        }
     }
 
     public static void main(String... args) throws IOException, JSONException {

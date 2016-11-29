@@ -16,10 +16,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 import static sample.utils.JiraBasicRest.DATE;
 
@@ -27,6 +24,12 @@ import static sample.utils.JiraBasicRest.DATE;
  * Created by ali.naffaa and mariya.azoyan 18.08.2016.
  */
 public class TestHttp {
+    static ArrayList <String> daysOff = new ArrayList<>();
+    static {
+        daysOff.add("Sunday");
+        daysOff.add("Saturday");
+    }
+
 
     public static ArrayList<JiraIssue>  getLogWorkWithCredAndDays(String credentials,int days) throws IOException {
         ArrayList<JiraIssue> jiraIssueArrayList = new ArrayList<>();
@@ -53,32 +56,6 @@ public class TestHttp {
         }
         return jiraIssueArrayList;
     }
-
-
-    public static void logWork(JiraIssue issueToLog,String credentials) throws IOException {
-        ArrayList<JiraIssue> jiraIssueArrayList = new ArrayList<>();
-        HashMap<String, String> headersMap = new HashMap<>();
-        headersMap.put("Content-Type", "application/json");
-        headersMap.put("Authorization", "Basic " + credentials);
-        String json = getPost(headersMap, "https://jira.ringcentral.com/rest/api/2/issue/" + issueToLog + "/worklog");
-
-        ObjectMapper mapper = new ObjectMapper();
-        Worklog[] w = mapper.readValue(json, Result.class).getWorklog();
-        for (Worklog worklog : w) {
-            Entries[] entries = worklog.getEntries();
-            LinkedHashMap<String, String> date = new LinkedHashMap<>();
-            for (Entries entry : entries) {
-                if (date.containsKey(entry.getStartDate())) {
-                    String fullDate = String.valueOf(Long.valueOf(date.get(entry.getStartDate())) + Long.valueOf(entry.getTimeSpent()));
-                    date.put(entry.getStartDate(), fullDate);
-                } else {
-                    date.put(entry.getStartDate(), entry.getTimeSpent());
-                }
-            }
-            jiraIssueArrayList.add(new JiraIssue(worklog.getKey(), date));
-        }
-    }
-
 
 
     public static HashMap<String,String>  getLogWork(String credentials,int days) throws IOException {
@@ -142,7 +119,7 @@ public class TestHttp {
             if (dateAndLogTime.keySet().contains(id) && !dateAndLogTime.get(id).equals("28800")) {
                 String leftToLog = String.valueOf(28800L - Long.parseLong(dateAndLogTime.get(id)));
                 needLogJira.addWorkLog(id, leftToLog);
-            } else {
+            } else if(!dateAndLogTime.containsKey(id)){
                 needLogJira.addWorkLog(id, data.get(id));
             }
         }
@@ -155,9 +132,17 @@ public class TestHttp {
         for (int counter = 0; counter < days; counter++) {
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR,-counter);
-            data.put(dateTimeFormatter.format(calendar.getTime()),"28800");
+            if(!isDateOFF(calendar))
+                data.put(dateTimeFormatter.format(calendar.getTime()),"28800");
         }
         return data;
+    }
+
+    private static boolean  isDateOFF(Calendar calendar){
+
+        SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("EEEE",Locale.ENGLISH);
+        String day = dateTimeFormatter.format(calendar.getTime());
+        return daysOff.contains(day);
     }
 
     private static String getDate(String date){

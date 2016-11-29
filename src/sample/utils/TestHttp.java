@@ -127,7 +127,7 @@ public class TestHttp {
     }
 
     private static HashMap<String, String> getCalendarDays(int days) {
-        HashMap<String, String> data = new HashMap<>();
+        LinkedHashMap <String, String> data = new LinkedHashMap<>();
         SimpleDateFormat dateTimeFormatter = new SimpleDateFormat(DATE);
         for (int counter = 0; counter < days; counter++) {
             Calendar calendar = Calendar.getInstance();

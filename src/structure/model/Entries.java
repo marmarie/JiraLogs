@@ -3,23 +3,14 @@ package structure.model;
 public class Entries
 {
     private String id;
-
     private String startDate;
-
     private String author;
-
     private String updated;
-
     private String created;
-
     private String updateAuthorFullName;
-
     private String updateAuthor;
-
     private String timeSpent;
-
     private String comment;
-
     private String authorFullName;
 
     public String getId ()
@@ -77,8 +68,7 @@ public class Entries
         return updateAuthorFullName;
     }
 
-    public void setUpdateAuthorFullName (String updateAuthorFullName)
-    {
+    public void setUpdateAuthorFullName (String updateAuthorFullName) {
         this.updateAuthorFullName = updateAuthorFullName;
     }
 
@@ -123,8 +113,7 @@ public class Entries
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "ClassPojo [id = "+id+", startDate = "+startDate+", author = "+author+", updated = "+updated+", created = "+created+", updateAuthorFullName = "+updateAuthorFullName+", updateAuthor = "+updateAuthor+", timeSpent = "+timeSpent+", comment = "+comment+", authorFullName = "+authorFullName+"]";
     }
 }

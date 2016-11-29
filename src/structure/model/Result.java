@@ -39,8 +39,7 @@ public class Result
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "ClassPojo [startDate = "+startDate+", endDate = "+endDate+", worklog = "+worklog+"]";
     }
 }

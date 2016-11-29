@@ -3,11 +3,6 @@ package sample.utils;
 import structure.JiraIssue;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Formatter;
 import java.util.HashMap;
 
 /**
@@ -19,7 +14,7 @@ public class JiraBasicRest {
     public static final String DATE = "yyyy-MM-dd";
     public static void main(String args []) throws IOException {
         String basicIssue  = "AUT-10223";
-        String cred = "YWxpLm5hZmZhYTo2e0swdSQyeXpa";
+        String cred = "";
         int days = 5;
 //        ArrayList<JiraIssue> issues = TestHttp.getLogWorkWithCredAndDays(cred,days);
         HashMap<String,String> dateAndLogTime = TestHttp.getLogWork(cred,days);

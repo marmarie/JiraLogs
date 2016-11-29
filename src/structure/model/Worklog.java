@@ -1,14 +1,12 @@
 package structure.model;
 
-public class Worklog
-{
+public class Worklog {
+
     private String summary;
-
     private Entries[] entries;
-
     private String key;
-
     private String[] fields;
+
 
     public String getSummary ()
     {
@@ -51,8 +49,7 @@ public class Worklog
     }
 
     @Override
-    public String toString()
-    {
-        return "ClassPojo [summary = "+summary+", entries = "+entries+", key = "+key+", fields = "+fields+"]";
+    public String toString() {
+        return " [summary = "+summary+", entries = "+entries+", key = "+key+", fields = "+fields+"]";
     }
 }

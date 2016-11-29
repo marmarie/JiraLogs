@@ -9,15 +9,11 @@ import java.util.LinkedHashMap;
 public class JiraIssue {
 
     String id;
-
-
-
+    LinkedHashMap<String, String> workLogs;
 
     public void setWorkLogs(LinkedHashMap<String, String> workLogs) {
         this.workLogs = workLogs;
     }
-
-    LinkedHashMap<String, String> workLogs;
 
     public String getId() {
         return id;

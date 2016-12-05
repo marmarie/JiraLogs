@@ -18,6 +18,7 @@ import java.util.Optional;
 import static sample.utils.FileReader.getCredentialsFromFile;
 import static sample.utils.Helper.encodeCredentials;
 import static sample.utils.Helper.getPassword;
+import static sample.utils.TestHttp.basicAuthorization;
 
     /**
      * Created by marie on 24.11.16.
@@ -54,34 +55,39 @@ import static sample.utils.Helper.getPassword;
             username.setPromptText("Username");
             PasswordField password = new PasswordField();
             password.setPromptText("Password");
+            CheckBox saveCredentials = new CheckBox("Remember me");
+
+
 
             grid.add(new Label("Username:"), 0, 0);
             grid.add(username, 1, 0);
             grid.add(new Label("Password:"), 0, 1);
             grid.add(password, 1, 1);
+            grid.add(saveCredentials, 1, 2);
 
             // Enable/Disable login button depending on whether a username was entered.
             Node loginButton = dialog.getDialogPane().lookupButton(loginButtonType);
             loginButton.setDisable(true);
 
-            if(FileReader.isFileExists()) {
-                userPreferences = getCredentialsFromFile();
-                username.setText(userPreferences.getUserName());
-                password.setText(getPassword(userPreferences.getCredentials()));
-                loginButton.setDisable(false);
-            }
+
 
             // Do some validation (using the Java 8 lambda syntax).
             username.textProperty().addListener((observable, oldValue, newValue) ->
                     {
-                        loginButton.setDisable(newValue.trim().isEmpty() || oldValue.trim().isEmpty());
+                        loginButton.setDisable(newValue.trim().isEmpty());
                     });
             dialog.getDialogPane().setContent(grid);
 
             // Request focus on the username field by default.
             Platform.runLater(() -> username.requestFocus());
 
-
+            if(FileReader.isFileExists()) {
+                userPreferences = getCredentialsFromFile();
+                username.setText(userPreferences.getUserName());
+                password.setText(getPassword(userPreferences.getCredentials()));
+                loginButton.setDisable(false);
+                saveCredentials.setVisible(false);
+            }
 
             // Convert the result to a username-password-pair when the login button is clicked.
             dialog.setResultConverter(dialogButton ->
@@ -99,11 +105,29 @@ import static sample.utils.Helper.getPassword;
                 userPreferences.setUserName(usernamePassword.getKey());
                 userPreferences.setCredentials(encodeCredentials(usernamePassword.getKey()+":"+usernamePassword.getValue()));
                 try {
-                    FileReader.saveUserPreferences(userPreferences);
+                    final int[] code = new int[1];
+                    Thread thread = new Thread(() -> {
+                        try {
+                            code[0] = basicAuthorization(userPreferences);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                    thread.start();
+
+                    if(code[0] ==200) {
+                        if (saveCredentials.isSelected())
+                            FileReader.saveUserPreferences(userPreferences);
+                            new LogJiraWorkUI().start(new Stage());
+                    }
+                    else new Alert(Alert.AlertType.INFORMATION,"Code " + String.valueOf(code[0])).show();
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
+
         }
 
 

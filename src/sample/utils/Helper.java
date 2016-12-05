@@ -18,9 +18,6 @@ public class Helper {
         return new String(decodedBytes).split(":")[1];
     }
 
-
-
-
     public static String encodeCredentials(String cred){
         return Base64.encodeBase64String(cred.getBytes());
     }

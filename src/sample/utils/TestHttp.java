@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import structure.JiraIssue;
 import structure.model.Entries;
 import structure.model.Result;
+import structure.model.UserPreferences;
 import structure.model.Worklog;
 
 import java.io.BufferedReader;
@@ -29,7 +30,7 @@ import static sample.utils.JiraBasicRest.DATE;
  * Created by ali.naffaa and mariya.azoyan 18.08.2016.
  */
 
-public class TestHttp {
+public class TestHttp  {
 
     static ArrayList<String> daysOff = new ArrayList<>();
     static HashMap<String, String> headersMap = new HashMap<>();
@@ -91,7 +92,8 @@ public class TestHttp {
     public static HashMap<String, String> getLogWork(String credentials, int days) throws IOException {
         HashMap<String, String> hashMap = new HashMap<>();
         putCredentials(credentials);
-        String json = post(headersMap, "https://jira.ringcentral.com/rest/timesheet-gadget/1.0/raw-timesheet.json?targetUser=" + getUserName(credentials) + "&startDate=" + getDate(days));
+        String
+                json = post(headersMap, "https://jira.ringcentral.com/rest/timesheet-gadget/1.0/raw-timesheet.json?targetUser=" + getUserName(credentials) + "&startDate=" + getDate(days));
 
         Worklog[] w = new ObjectMapper().readValue(json, Result.class).getWorklog();
         for (Worklog worklog : w) {
@@ -106,6 +108,21 @@ public class TestHttp {
             }
         }
         return hashMap;
+    }
+
+    public static int basicAuthorization(UserPreferences userPreferences) throws IOException {
+        putCredentials(userPreferences.getCredentials());
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpGet request = new HttpGet("http://jira.ringcentral.com");
+            putHeadersInRequest(request, headersMap);
+            try (CloseableHttpResponse response = client.execute(request)) {
+                return response.getStatusLine().getStatusCode();
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return 0;
     }
 
 
@@ -176,7 +193,6 @@ public class TestHttp {
         calendar.add(Calendar.DAY_OF_YEAR, -days);
         return format.format(calendar.getTime());
     }
-
 
 
 

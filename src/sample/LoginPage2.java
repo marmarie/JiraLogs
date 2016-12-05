@@ -33,20 +33,10 @@ public class LoginPage2 extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-
-        // Create the custom dialog.
         Pane root = new Pane();
         Scene scene = new Scene(root, 350, 300);
         primaryStage.setTitle("Jira");
-
-
-        // Set the icon (must be included in the project).
-
-
-        // Set the button types.
         Button loginButton = new Button("Login");
-//            Button loading = new Button("Loading!!!");
-//           loading.setOnAction(n -> new ProgressIndicator().);
 
         // Create the username and password labels and fields.
         GridPane grid = new GridPane();
@@ -121,46 +111,6 @@ public class LoginPage2 extends Application {
             });
             thread1.start();
         });
-//
-//
-//            Optional<Pair<String, String>> result = dialog.showAndWait();
-
-//            Thread thread1 = new Thread(() -> {
-//                try {
-//                    result.ifPresent(usernamePassword ->
-//                    {
-//                        userPreferences.setUserName(usernamePassword.getKey());
-//                        userPreferences.setCredentials(encodeCredentials(usernamePassword.getKey() + ":" + usernamePassword.getValue()));
-//                        int code=0;
-//                        try {
-//                            System.out.println("Thread 2 ");
-//                            code = basicAuthorization(userPreferences);
-//                                    progressIndicator.setVisible(true);
-//                            } catch (IOException e) {
-//                            e.printStackTrace();
-//                            System.out.println("ex");
-//                        }
-//                            if (code == 200) {
-//                                System.out.println("Code: "+code);
-//                                if (saveCredentials.isSelected())
-//                                    try {
-//                                        FileReader.saveUserPreferences(userPreferences);
-//                                        new LogJiraWorkUI().start(new Stage());
-//                                    } catch (IOException e) {
-//                                        e.printStackTrace();
-//                                    } catch (Exception e) {
-//                                        e.printStackTrace();
-//                                    }
-//                            } else new Alert(Alert.AlertType.INFORMATION, "Code " + String.valueOf(code)).show();
-//
-//                    });
-//
-//                } catch (Exception es) {
-//                    es.printStackTrace();
-//                }
-//            });
-//            thread1.start();
-
     }
 
 

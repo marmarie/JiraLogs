@@ -1,5 +1,8 @@
 package sample.utils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import structure.model.UserPreferences;
+
 import java.io.*;
 
 /**
@@ -41,9 +44,22 @@ public class FileReader {
         }
         else
             System.out.println("File already exists");
-
-
-
-
     }
+
+    public static void saveUserPreferences(UserPreferences userPreferences) throws IOException{
+        File file = getFile();
+        if(file.createNewFile()) {
+            System.out.println("New file was created");
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.writeValue(file, userPreferences);
+        }
+        else
+            System.out.println("File already exists");
+    }
+
+    public static UserPreferences getCredentialsFromFile() throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(getFile(), UserPreferences.class);
+    }
+
 }

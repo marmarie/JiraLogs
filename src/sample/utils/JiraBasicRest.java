@@ -13,14 +13,13 @@ public class JiraBasicRest {
 
     public static final String DATE = "yyyy-MM-dd";
     public static void main(String args []) throws IOException, JSONException {
-        String basicIssue  = "AUT-10223";
-        String cred = "";
+        String basicIssue = "AUT-10223";
+        String cred = "bWFyaXlhLmF6b3lhbjpKdW5lITAxMDY=";
         int days = 5;
         HashMap<String,String> dateAndLogTime = TestHttp.getLogWork(cred,days);
         JiraIssue issueToLog = TestHttp.getIssueListForLog(basicIssue,dateAndLogTime,days);
         TestHttp.logWork(cred,issueToLog);
 
-        System.out.println(issueToLog);
 
     }
 }

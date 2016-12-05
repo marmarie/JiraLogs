@@ -26,7 +26,6 @@ public class Main extends Application {
 
 
 
-
         Scene scene = new Scene(root,350,300);
         Button loginButton = new Button("Login");
         loginButton.setTranslateX(100);

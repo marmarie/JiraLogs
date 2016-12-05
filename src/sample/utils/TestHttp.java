@@ -2,7 +2,6 @@ package sample.utils;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpRequest;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -23,6 +22,7 @@ import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static sample.utils.Helper.getUserName;
 import static sample.utils.JiraBasicRest.DATE;
 
 /**
@@ -178,10 +178,7 @@ public class TestHttp {
     }
 
 
-    private static String getUserName(String cred) {
-        byte[] decodedBytes = Base64.decodeBase64(cred);
-        return new String(decodedBytes).split(":")[0];
-    }
+
 
 }
 

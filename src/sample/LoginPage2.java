@@ -86,6 +86,11 @@ public class LoginPage2 extends Application {
         loginButton.setOnAction(event -> {
             userPreferences.setUserName(username.getText());
             userPreferences.setCredentials(encodeCredentials(username.getText() + ":" + password.getText()));
+
+            Platform.runLater(() -> {
+                progressIndicator.setVisible(true);
+            });
+
             Thread thread1 = new Thread(() -> {
                 progressIndicator.setVisible(true);
                 int code = 0;
@@ -96,27 +101,31 @@ public class LoginPage2 extends Application {
                     e.printStackTrace();
                     System.out.println("ex");
                 }
-                if (code == 200) {
-                    System.out.println("Code: " + code);
-                    if (saveCredentials.isSelected()){
-                        try {
-                            FileReader.saveUserPreferences(userPreferences);
+                int finalCode = code;
+                Platform.runLater(() -> {
+                    if (finalCode == 200) {
+                        System.out.println("Code: " + finalCode);
+                        if (saveCredentials.isSelected()){
+                            try {
+                                FileReader.saveUserPreferences(userPreferences);
 
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        try {
+                            new LogJiraWorkUI().start(new Stage());
                         } catch (Exception e) {
                             e.printStackTrace();
+                            System.out.println("Error");
                         }
+                    } else{
+                        new Alert(Alert.AlertType.INFORMATION, "Code " + String.valueOf(finalCode)).show();
                     }
-                    try {
-                        new LogJiraWorkUI().start(new Stage());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        System.out.println("Error");
-                    }
-                } else{
-                    new Alert(Alert.AlertType.INFORMATION, "Code " + String.valueOf(code)).show();
-                }
+                });
+
 
             });
             thread1.setDaemon(true);

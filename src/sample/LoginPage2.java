@@ -89,6 +89,8 @@ public class LoginPage2 extends Application {
 
             Platform.runLater(() -> {
                 progressIndicator.setVisible(true);
+                loginButton.setDisable(true);
+
             });
 
             Thread thread1 = new Thread(() -> {

@@ -1,13 +1,20 @@
 package sample;
 
+import com.sun.javafx.sg.prism.EffectFilter;
 import javafx.event.ActionEvent;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
+import javafx.scene.effect.Effect;
+import javafx.scene.layout.*;
+import javafx.scene.paint.*;
+import javafx.scene.paint.Color;
 import sample.utils.Helper;
 import sample.utils.TestHttp;
+
+import java.awt.*;
 
 /**
  * Created by marie on 08.12.16.
@@ -19,45 +26,20 @@ public class LogDaysContent {
         @Override
         public void replaceText(int start, int end, String text) {
             String all = taskTime.getText()+text;
-            if (isCorrectSymbol(text)&&isCorrectAllText(all)||text.isEmpty()) {
+            System.out.println("start"+start +" end "+ end +" text "+ text);
+            if (isCorrectSymbol(text)&&isCorrectAllText(all)||(start!=end||text.isEmpty())&&text.matches("[0-9]")) {
                 super.replaceText(start, end, text);
-            }
-            if(text.matches("[h|m|d]")){
-                String time = Helper.getTimeInSeconds(all);
-                if(Integer.parseInt(time)>28800){
-                    taskTime.setText("1d");
-                }
-            }
-        }
-        @Override
-        public void replaceSelection(String text) {
-            String all = taskTime.getText()+text;
-            if (isCorrectSymbol(text)&&isCorrectAllText(all)||text.isEmpty()) {
-                super.replaceSelection(text);
-            }
-            if(text.matches("[h|m|d]")){
-                String time = Helper.getTimeInSeconds(all);
-                if(Integer.parseInt(time)>28800){
-                    taskTime.setText("1d");
+                if(text.matches("[h|m|d]")&&all.replaceAll("[h|m|d]","").length()>0){
+                    String time = Helper.getTimeInSeconds(all);
+                    if(Integer.parseInt(time)>28800){
+                        taskTime.setText("1d");
+                    }
                 }
             }
         }
     };
     Button logWork = new Button("Log Work");
     GridPane grid= new GridPane();
-
-//    public void validation(){
-//        @Override
-//        public void replaceText(int start, int end, String text) {
-//            while(text.length()!=2){}
-//            if (text.matches("^[0-8][h]{1}")) {
-//                super.replaceText(start, end, text);
-//            }
-//        }
-//
-
-//    }
-
 
 
     public void logTime(){

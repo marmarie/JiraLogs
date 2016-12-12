@@ -96,6 +96,7 @@ public class LoginPage2 extends Application {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
                 int finalCode = code;
                 Platform.runLater(() -> {
                     if (finalCode == 200) {

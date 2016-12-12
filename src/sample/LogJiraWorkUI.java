@@ -13,6 +13,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.util.Locale;
+
 /**
  * Created by marie on 05.12.16.
  */
@@ -22,9 +24,10 @@ public class LogJiraWorkUI extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        Locale.setDefault(Locale.ENGLISH);
         primaryStage.setTitle("Tabs");
         Group root = new Group();
-        Scene scene = new Scene(root, 370, 250, Color.WHITE);
+        Scene scene = new Scene(root, 450, 250, Color.WHITE);
 
         TabPane tabPane = new TabPane();
 

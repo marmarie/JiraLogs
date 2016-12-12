@@ -22,8 +22,26 @@ public class LogDaysContent {
             if (isCorrectSymbol(text)&&isCorrectAllText(all)||text.isEmpty()) {
                 super.replaceText(start, end, text);
             }
+            if(text.matches("[h|m|d]")){
+                String time = Helper.getTimeInSeconds(all);
+                if(Integer.parseInt(time)>28800){
+                    taskTime.setText("1d");
+                }
+            }
         }
-
+        @Override
+        public void replaceSelection(String text) {
+            String all = taskTime.getText()+text;
+            if (isCorrectSymbol(text)&&isCorrectAllText(all)||text.isEmpty()) {
+                super.replaceSelection(text);
+            }
+            if(text.matches("[h|m|d]")){
+                String time = Helper.getTimeInSeconds(all);
+                if(Integer.parseInt(time)>28800){
+                    taskTime.setText("1d");
+                }
+            }
+        }
     };
     Button logWork = new Button("Log Work");
     GridPane grid= new GridPane();
@@ -37,12 +55,7 @@ public class LogDaysContent {
 //            }
 //        }
 //
-//        @Override
-//        public void replaceSelection(String text) {
-//            if (text.contains("^[0-8]h{1}") || text.isEmpty()) {
-//                super.replaceSelection(text);
-//            }
-//        }
+
 //    }
 
 
@@ -91,8 +104,7 @@ public class LogDaysContent {
     }
 
     private boolean isCorrectAllText(String all){
-//        if((all.matches("^\\d{1,3}|^\\d{1,5}+."))&&all.replaceAll("[0-9]","").length()<=1)
-        if((all.matches("^\\d{1,3}")&&all.matches("^[0-1]+d{0,1}|^[0-8]{0,1}+h{0,1}"))&&all.replaceAll("[0-9]","").length()<=1)
+        if((all.matches("^\\d{1,3}|^\\d{1,5}+."))&&all.replaceAll("[0-9]","").length()<=1)
             return true;
         else
             return false;

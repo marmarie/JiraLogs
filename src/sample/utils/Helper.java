@@ -46,7 +46,7 @@ public class Helper {
         return new JiraIssue(id, workLogs);
     }
 
-    private static String getTimeInSeconds(String time){
+    public static String getTimeInSeconds(String time){
         if(time.contains("d"))
             return Integer.parseInt(time.replace("d", "")) * 8*3600 + "";
         if (time.contains("h"))

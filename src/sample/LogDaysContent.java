@@ -19,14 +19,15 @@ public class LogDaysContent {
     TextField taskTime = new TextField(){
         @Override
         public void replaceText(int start, int end, String text) {
-            if (text.matches("^[0-8]*[h]") || text.isEmpty()) {
+            String all = taskTime.getText()+text;
+            if (isCorrectSymbol(text)&&isCorrectAllText(all)||text.isEmpty()) {
                 super.replaceText(start, end, text);
             }
         }
 
         @Override
         public void replaceSelection(String text) {
-            if (text.matches("^[0-8]*[h]") || text.isEmpty()) {
+            if (!text.matches("^[9]")) {
                 super.replaceSelection(text);
             }
         }
@@ -70,6 +71,20 @@ public class LogDaysContent {
         grid.add(new Label("Time:  "), 0, 1);
         grid.add(taskTime, 1, 1);
         grid.add(logWork, 0, 2);
+    }
+
+    private boolean isCorrectSymbol(String symbol){
+        if(symbol.matches("[0-9]")||symbol.matches("[h|m|d]"))
+            return true;
+        else
+            return false;
+    }
+
+    private boolean isCorrectAllText(String all){
+        if(all.matches("^\\d+")&&all.replaceAll("[0-9]","").length()<=1)
+            return true;
+        else
+            return false;
     }
 
 

@@ -1,8 +1,8 @@
 package sample;
 
-
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -13,28 +13,35 @@ import sample.utils.FileReader;
 import structure.model.UserPreferences;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 import static sample.utils.FileReader.getCredentialsFromFile;
 import static sample.utils.Helper.encodeCredentials;
 import static sample.utils.Helper.getPassword;
 import static sample.utils.TestHttp.basicAuthorization;
 
-/**
- * Created by marie on 24.11.16.
- */
-public class LoginPage2 extends Application {
-    UserPreferences userPreferences = new UserPreferences();
 
+/**
+ * Created by marie on 06.12.16.
+ */
+public class LoginPage3 extends Application {
+
+    static UserPreferences userPreferences = new UserPreferences();
+
+    Integer result;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
+        final int[] code = {0};
+        // Create the custom dialog.
         Pane root = new Pane();
         Scene scene = new Scene(root, 350, 300);
         primaryStage.setTitle("Jira");
+
+
         Button loginButton = new Button("Login");
 
-        // Create the username and password labels and fields.
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -69,7 +76,6 @@ public class LoginPage2 extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-
         if (FileReader.isFileExists()) {
             userPreferences = getCredentialsFromFile();
             username.setText(userPreferences.getUserName());
@@ -78,53 +84,55 @@ public class LoginPage2 extends Application {
             saveCredentials.setVisible(false);
         }
 
-        loginButton.setOnAction(event -> {
+
+        loginButton.setOnAction((ActionEvent event) -> {
+
+            progressIndicator.setVisible(true);
+            loginButton.setDisable(true);
             userPreferences.setUserName(username.getText());
             userPreferences.setCredentials(encodeCredentials(username.getText() + ":" + password.getText()));
 
-            Platform.runLater(() -> {
-                progressIndicator.setVisible(true);
-                loginButton.setDisable(true);
+                CompletableFuture.supplyAsync(() -> {
+                    try {
+                        result = basicAuthorization(userPreferences);
+                        progressIndicator.setVisible(false);
 
-            });
-
-            Thread thread1 = new Thread(() -> {
-                progressIndicator.setVisible(true);
-                int code = 0;
-                try {
-                    code = basicAuthorization(userPreferences);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                int finalCode = code;
-                Platform.runLater(() -> {
-                    if (finalCode == 200) {
-                        if (saveCredentials.isSelected()){
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Platform.runLater(() -> {
+                        if (result == 200) {
+                            if (saveCredentials.isSelected()){
+                                try {
+                                    FileReader.saveUserPreferences(userPreferences);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
                             try {
-                                FileReader.saveUserPreferences(userPreferences);
+                                new LogJiraWorkUI().start(new Stage());
+                                primaryStage.close();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                        } else{
+                            new Alert(Alert.AlertType.INFORMATION, "Code " + String.valueOf(result)).show();
                         }
-                        try {
-                            new LogJiraWorkUI().start(new Stage());
-                            primaryStage.close();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    } else{
-                        new Alert(Alert.AlertType.INFORMATION, "Code " + String.valueOf(finalCode)).show();
-                    }
+                    });
+                    loginButton.setDisable(false);
+                    return result;
+
                 });
 
-
-            });
-            thread1.setDaemon(true);
-            thread1.start();
-            System.out.println(Thread.currentThread());
         });
+
+
+
     }
 
+    public static UserPreferences getUserPreferences(){
+        return userPreferences;
+    }
 
     public static void main(String[] args) {
         launch(args);

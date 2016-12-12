@@ -20,11 +20,9 @@ import structure.model.Worklog;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.HashMap;
 
-import static sample.utils.Helper.getUserName;
-import static sample.utils.JiraBasicRest.DATE;
+import static sample.utils.Helper.*;
 
 /**
  * Created by ali.naffaa and mariya.azoyan 18.08.2016.
@@ -32,16 +30,11 @@ import static sample.utils.JiraBasicRest.DATE;
 
 public class TestHttp  {
 
-    static ArrayList<String> daysOff = new ArrayList<>();
     static HashMap<String, String> headersMap = new HashMap<>();
-    static SimpleDateFormat format = new SimpleDateFormat(DATE);
 
-    static  {
-        daysOff.add("Sunday");
-        daysOff.add("Saturday");
-        headersMap.put("Content-Type", "application/json");
-
-    }
+    static {
+    headersMap.put("Content-Type", "application/json");
+   }
 
     public static void putCredentials(String credentials) {
         headersMap.put("Authorization", "Basic " + credentials);
@@ -71,8 +64,6 @@ public class TestHttp  {
             try (CloseableHttpResponse response = client.execute(request)) {
                   if (response.getStatusLine().getStatusCode() == 201)
                         return true;
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
         return false;
@@ -82,7 +73,7 @@ public class TestHttp  {
         putCredentials(credentials);
         for(String dateIssue : jiraIssue.getWorkLogs().keySet()) {
             String time = jiraIssue.getWorkLogs().get(dateIssue);
-            System.out.println("log to "+jiraIssue.getId()+" date = " +dateIssue +" time to log="+time);
+            System.out.println("log to "+jiraIssue.getId()+" date = " +dateIssue +" time to log="+ time);
             makePost(headersMap, "https://jira.ringcentral.com/rest/api/latest/issue/" + jiraIssue.getId() + "/worklog", makeJSON(dateIssue+"T15:01:00.000+0000", time+"s"));
         }
     }
@@ -164,35 +155,10 @@ public class TestHttp  {
         return needLogJira;
     }
 
-    private static HashMap<String, String> getCalendarDays(int days) {
-        LinkedHashMap<String, String> data = new LinkedHashMap<>();
-        for (int counter = 0; counter < days; counter++) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.DAY_OF_YEAR, -counter);
-            if (!isDateOFF(calendar))
-                data.put(format.format(calendar.getTime()), "28800");
-        }
-        return data;
-    }
-
-    private static boolean isDateOFF(Calendar calendar) {
-        SimpleDateFormat format = new SimpleDateFormat("EEEE", Locale.ENGLISH);
-        String day = format.format(calendar.getTime());
-        return daysOff.contains(day);
-    }
-
-    private static String getDate(String date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(Long.parseLong(date));
-        return format.format(calendar.getTime());
-    }
 
 
-    private static String getDate(int days) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, -days);
-        return format.format(calendar.getTime());
-    }
+
+
 
 
 

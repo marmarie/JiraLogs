@@ -95,6 +95,31 @@
             dialog.setResultConverter(dialogButton ->
             {
                 if (dialogButton == loginButtonType) {
+                    try {
+                        final int[] code = new int[1];
+                        Thread thread = new Thread(() -> {
+                            try {
+                                code[0] = basicAuthorization(userPreferences);
+                                progressIndicator.setVisible(true);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                        thread.start();
+                        this.notify();
+
+                        if(code[0] ==200) {
+                            if (saveCredentials.isSelected())
+                                FileReader.saveUserPreferences(userPreferences);
+                            new LogJiraWorkUI().start(new Stage());
+                        }
+                        else new Alert(Alert.AlertType.INFORMATION,"Code " + String.valueOf(code[0])).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                     return new Pair<>(username.getText(), password.getText());
                 }
                 return null;
@@ -102,41 +127,13 @@
 
             Optional<Pair<String, String>> result = dialog.showAndWait();
             progressIndicator.setVisible(true);
-            Thread thread1 = new Thread(() -> {
-                try {
-                    result.ifPresent(usernamePassword ->
-                    {
-                        userPreferences.setUserName(usernamePassword.getKey());
-                        userPreferences.setCredentials(encodeCredentials(usernamePassword.getKey() + ":" + usernamePassword.getValue()));
-                        int code=0;
-                        try {
-                            System.out.println("Thread 2 ");
-                            code = basicAuthorization(userPreferences);
-                                    progressIndicator.setVisible(true);
-                            } catch (IOException e) {
-                            e.printStackTrace();
-                            System.out.println("ex");
-                        }
-                            if (code == 200) {
-                                System.out.println("Code: "+code);
-                                if (saveCredentials.isSelected())
-                                    try {
-                                        FileReader.saveUserPreferences(userPreferences);
-                                        new LogJiraWorkUI().start(new Stage());
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                            } else new Alert(Alert.AlertType.INFORMATION, "Code " + String.valueOf(code)).show();
 
-                    });
+            result.ifPresent(usernamePassword ->
+            {
+                userPreferences.setUserName(usernamePassword.getKey());
+                userPreferences.setCredentials(encodeCredentials(usernamePassword.getKey()+":"+usernamePassword.getValue()));
 
-                } catch (Exception es) {
-                    es.printStackTrace();
-                }
             });
-            thread1.start();
 
         }
 

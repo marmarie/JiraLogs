@@ -17,7 +17,7 @@ public class LogMonthContent {
     TextField taskName = new TextField();
     Button logWork = new Button("Log Work");
     GridPane grid= new GridPane();
-    private DatePicker checkInDatePicker;
+    private DatePicker checkInDatePicker = new DatePicker();
 
     public GridPane getContent(){
         setGrid();
@@ -37,7 +37,9 @@ public class LogMonthContent {
     public void addElementsToGrid(){
         grid.add(new Label("Task Name: "), 0, 0);
         grid.add(taskName, 1, 0);
-        grid.add(logWork, 0, 1);
+        grid.add(new Label("From: "), 0, 1);
+        grid.add(checkInDatePicker, 1, 1);
+        grid.add(logWork, 0, 2);
     }
 
     public void logTime(){

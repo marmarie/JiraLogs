@@ -49,8 +49,6 @@ public class LogDaysContent {
             String taskT = taskTime.getText();
 
             logWork.setDisable(true);
-            taskName.setText("AUT-10223");
-            taskTime.setText("1m");
             try {
                 TestHttp.logWork(LoginPage3.getUserPreferences().getCredentials(), Helper.getIssue(taskN, taskT));
                 grid.add(new Label("Logged " + taskTime.getText() + " to " + taskName.getText()), 1, 3);

@@ -42,7 +42,7 @@ public class LogJiraWorkUI extends Application {
 
             // hbox.getChildren().add(new Label("ALIALI"));
              hbox.setAlignment(Pos.CENTER);
-          //   tabD.setContent(hbox);
+             tabD.setContent(new LogMonthContent().getContent());
              tabS.setContent(new LogDaysContent().getContent());
             tabPane.getTabs().addAll(tabD, tabS);
 

@@ -15,7 +15,6 @@ import sample.utils.TestHttp;
 public class LogDaysContent {
 
     TextField taskName = new TextField();
-
     TextField taskTime = new TextField(){
         @Override
         public void replaceText(int start, int end, String text) {
@@ -25,16 +24,26 @@ public class LogDaysContent {
             }
         }
 
-        @Override
-        public void replaceSelection(String text) {
-            if (!text.matches("^[9]")) {
-                super.replaceSelection(text);
-            }
-        }
     };
     Button logWork = new Button("Log Work");
     GridPane grid= new GridPane();
-   // Label logInfo =
+
+//    public void validation(){
+//        @Override
+//        public void replaceText(int start, int end, String text) {
+//            while(text.length()!=2){}
+//            if (text.matches("^[0-8][h]{1}")) {
+//                super.replaceText(start, end, text);
+//            }
+//        }
+//
+//        @Override
+//        public void replaceSelection(String text) {
+//            if (text.contains("^[0-8]h{1}") || text.isEmpty()) {
+//                super.replaceSelection(text);
+//            }
+//        }
+//    }
 
 
 
@@ -43,6 +52,7 @@ public class LogDaysContent {
 
             String taskN = taskName.getText();
             String taskT = taskTime.getText();
+
             logWork.setDisable(true);
             taskName.setText("AUT-10223");
             taskTime.setText("1m");
@@ -81,7 +91,8 @@ public class LogDaysContent {
     }
 
     private boolean isCorrectAllText(String all){
-        if(all.matches("^\\d+")&&all.replaceAll("[0-9]","").length()<=1)
+//        if((all.matches("^\\d{1,3}|^\\d{1,5}+."))&&all.replaceAll("[0-9]","").length()<=1)
+        if((all.matches("^\\d{1,3}")&&all.matches("^[0-1]+d{0,1}|^[0-8]{0,1}+h{0,1}"))&&all.replaceAll("[0-9]","").length()<=1)
             return true;
         else
             return false;

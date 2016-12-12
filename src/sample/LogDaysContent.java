@@ -27,7 +27,7 @@ public class LogDaysContent {
         public void replaceText(int start, int end, String text) {
             String all = taskTime.getText()+text;
             System.out.println("start"+start +" end "+ end +" text "+ text);
-            if (isCorrectSymbol(text)&&isCorrectAllText(all)||(start!=end||text.isEmpty())&&text.matches("[0-9]")) {
+            if (isCorrectSymbol(text)&&isCorrectAllText(all)||(start!=end&&text.matches("[0-9]"))||text.isEmpty()) {
                 super.replaceText(start, end, text);
                 if(text.matches("[h|m|d]")&&all.replaceAll("[h|m|d]","").length()>0){
                     String time = Helper.getTimeInSeconds(all);

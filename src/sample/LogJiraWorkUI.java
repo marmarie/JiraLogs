@@ -33,22 +33,25 @@ public class LogJiraWorkUI extends Application {
 
         BorderPane borderPane = new BorderPane();
 
-            Tab tabD = new Tab();
-            tabD.setClosable(false);
+        Tab tabD = new Tab();
+        tabD.setClosable(false);
 
-            Tab tabS = new Tab();
-            tabS.setClosable(false);
+        Tab tabS = new Tab();
+        tabS.setClosable(false);
 
-            tabD.setGraphic(new Label("Log days"));
-            tabS.setGraphic(new Label("Log tasks"));
-             HBox hbox = new HBox();
+        Tab logAuto = new Tab();
+        logAuto.setClosable(false);
 
-            // hbox.getChildren().add(new Label("ALIALI"));
-             hbox.setAlignment(Pos.CENTER);
-             tabD.setContent(new LogMonthContent().getContent());
-             tabS.setContent(new LogDaysContent().getContent());
-            tabPane.getTabs().addAll(tabD, tabS);
+        tabD.setGraphic(new Label("Log days"));
+        tabS.setGraphic(new Label("Log tasks"));
+        logAuto.setGraphic(new Label("Auto log"));
+        HBox hbox = new HBox();
 
+        hbox.setAlignment(Pos.CENTER);
+        tabD.setContent(new LogMonthContent().getContent());
+        tabS.setContent(new LogDaysContent().getContent());
+        logAuto.setContent(new LogTodayAuto().getContent());
+        tabPane.getTabs().addAll(tabD, tabS,logAuto);
 
         tabPane.setSide(Side.LEFT);
         tabPane.setTabMinWidth(30);
@@ -56,7 +59,7 @@ public class LogJiraWorkUI extends Application {
         // bind to take available space
         borderPane.prefHeightProperty().bind(scene.heightProperty());
         borderPane.prefWidthProperty().bind(scene.widthProperty());
-      //  borderPane.setPrefWidth(text1.getScaleX());
+        //  borderPane.setPrefWidth(text1.getScaleX());
         borderPane.setLeft(tabPane);
         root.getChildren().add(borderPane);
         primaryStage.setScene(scene);
@@ -64,7 +67,7 @@ public class LogJiraWorkUI extends Application {
 
     }
 
-    public static void main(String...args){
+    public static void main(String... args) {
         launch(args);
     }
 }

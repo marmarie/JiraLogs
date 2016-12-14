@@ -39,7 +39,7 @@ public class LogMonthContent {
     }
 
     public void addElementsToGrid(){
-        grid.add(new Label("Task name: "), 0, 0);
+        grid.add(new Label("Task id: "), 0, 0);
         grid.add(taskName, 1, 0);
         grid.add(new Label("Start date: "), 0, 1);
 

@@ -68,11 +68,11 @@ public class LogDaysContent {
     }
 
     public void addElementsToGrid(){
-        grid.add(new Label("Task Name: "), 0, 0);
+        grid.add(new Label("Task id: "), 0, 0);
         grid.add(taskName, 1, 0);
         grid.add(new Label("Time:  "), 0, 1);
         grid.add(taskTime, 1, 1);
-        grid.add(logWork, 0, 2);
+        grid.add(logWork, 1, 2);
     }
 
     private boolean isCorrectSymbol(String symbol){

@@ -51,7 +51,7 @@ public class LogJiraWorkUI extends Application {
         tabD.setContent(new LogMonthContent().getContent());
         tabS.setContent(new LogDaysContent().getContent());
         logAuto.setContent(new LogTodayAuto().getContent());
-        tabPane.getTabs().addAll(tabD, tabS,logAuto);
+        tabPane.getTabs().addAll(tabS,tabD,logAuto);
 
         tabPane.setSide(Side.LEFT);
         tabPane.setTabMinWidth(30);

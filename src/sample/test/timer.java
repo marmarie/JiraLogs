@@ -30,8 +30,14 @@ public class timer {
     }
 
     public static void main(String args[]) {
-        System.out.println("About to schedule task.");
-        new timer(5);
-        System.out.println("Task scheduled.");
+        int delay = 5000; // delay for 5 sec.
+        int period = 1000; // repeat every sec.
+        Timer timer = new Timer();
+
+        timer.scheduleAtFixedRate(new TimerTask() {
+            public void run() {
+                System.out.println("doing");
+            }
+        }, delay, period);
     }
 }

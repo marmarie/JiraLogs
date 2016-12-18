@@ -12,6 +12,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import sample.test.Clock;
 
 import java.util.Locale;
 
@@ -43,7 +44,8 @@ public class LogJiraWorkUI extends Application {
         logAuto.setClosable(false);
 
         tabD.setGraphic(new Label("Log days"));
-        tabS.setGraphic(new Label("Log tasks"));
+        tabS.setGraphic(new Clock());
+        //tabS.setGraphic(new Label("Log tasks"));
         logAuto.setGraphic(new Label("Auto log"));
         HBox hbox = new HBox();
 

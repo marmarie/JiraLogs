@@ -5,6 +5,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -12,6 +13,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
+
+import javax.jnlp.IntegrationService;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by Ali on 13.12.2016.
@@ -24,8 +30,8 @@ public class LogTodayAuto {
     JFXDatePicker datePicker = new JFXDatePicker();
     private Label timerLabel = new Label();
     private Duration time = Duration.seconds(150), splitTime = Duration.ZERO;
-    private DoubleProperty timeSeconds = new SimpleDoubleProperty(),
-            splitTimeSeconds = new SimpleDoubleProperty();
+    private String timeSeconds;
+    private DoubleProperty splitTimeSeconds = new SimpleDoubleProperty();
 
 
 
@@ -54,7 +60,7 @@ public class LogTodayAuto {
     }
 
     public void checkBox(){
-        autoEnable.setOnAction(event->{
+        autoEnable.setOnAction((ActionEvent event) ->{
             if(autoEnable.isSelected()) {
                 taskName.setDisable(true);
                 datePicker.setDisable(true);
@@ -67,15 +73,14 @@ public class LogTodayAuto {
                                     t -> {
                                         Duration duration = ((KeyFrame) t.getSource()).getTime();
                                         time = time.subtract(duration);
-                                        //  splitTime = splitTime.add(duration);
-                                        timeSeconds.set(time.toSeconds());
-                                        //  splitTimeSeconds.set(splitTime.toSeconds());
+                                        Double seconds = time.toSeconds();
+                                        timeSeconds = String.format("%d:%02d:%02d", seconds/ 3600, (seconds % 3600) / 60, (seconds % 60));
                                     })
                     );
 
                     timeline.setCycleCount(Timeline.INDEFINITE);
                     timeline.play();
-                    timerLabel.textProperty().bind(timeSeconds.asString());
+                    timerLabel.setText(timeSeconds);
                     timerLabel.setTextFill(Color.RED);
                     timerLabel.setStyle("-fx-font-size: 4em;");
                 }

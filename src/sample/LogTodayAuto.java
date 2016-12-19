@@ -30,8 +30,9 @@ public class LogTodayAuto {
     JFXDatePicker datePicker = new JFXDatePicker();
     private Label timerLabel = new Label();
     private Duration time = Duration.seconds(150), splitTime = Duration.ZERO;
-    private String timeSeconds;
+    private DoubleProperty timeSeconds =  new SimpleDoubleProperty();
     private DoubleProperty splitTimeSeconds = new SimpleDoubleProperty();
+    String strTime = "";
 
 
 
@@ -60,7 +61,7 @@ public class LogTodayAuto {
     }
 
     public void checkBox(){
-        autoEnable.setOnAction((ActionEvent event) ->{
+        autoEnable.setOnAction(event->{
             if(autoEnable.isSelected()) {
                 taskName.setDisable(true);
                 datePicker.setDisable(true);
@@ -73,14 +74,14 @@ public class LogTodayAuto {
                                     t -> {
                                         Duration duration = ((KeyFrame) t.getSource()).getTime();
                                         time = time.subtract(duration);
-                                        Double seconds = time.toSeconds();
-                                        timeSeconds = String.format("%d:%02d:%02d", seconds/ 3600, (seconds % 3600) / 60, (seconds % 60));
+                                        timeSeconds.set(time.toSeconds());
                                     })
                     );
 
                     timeline.setCycleCount(Timeline.INDEFINITE);
                     timeline.play();
-                    timerLabel.setText(timeSeconds);
+                    int seconds = (int) timeSeconds.getValue().doubleValue();
+                    timerLabel.textProperty().setValue(String.format("%d:%02d:%02d",seconds/ 3600, (seconds % 3600) / 60, (seconds % 60)));
                     timerLabel.setTextFill(Color.RED);
                     timerLabel.setStyle("-fx-font-size: 4em;");
                 }

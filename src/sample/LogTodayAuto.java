@@ -1,11 +1,11 @@
 package sample;
 
 import com.jfoenix.controls.JFXDatePicker;
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.event.ActionEvent;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -14,10 +14,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
-import javax.jnlp.IntegrationService;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Created by Ali on 13.12.2016.
@@ -29,10 +28,10 @@ public class LogTodayAuto {
     CheckBox autoEnable = new CheckBox();
     JFXDatePicker datePicker = new JFXDatePicker();
     private Label timerLabel = new Label();
-    private Duration time = Duration.seconds(150), splitTime = Duration.ZERO;
-    private DoubleProperty timeSeconds =  new SimpleDoubleProperty();
-    private DoubleProperty splitTimeSeconds = new SimpleDoubleProperty();
-    String strTime = "";
+    private static DateTimeFormatter SHORT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
+    LocalTime time = LocalTime.now();
+    Duration t = Duration.valueOf(time.toSecondOfDay()+"s");
+    private StringProperty stringProperty = new SimpleStringProperty();
 
 
 
@@ -52,6 +51,8 @@ public class LogTodayAuto {
 
     public void addElementsToGrid(){
         checkBox();
+
+
         grid.add(new Label("Task id: "), 0, 0);
         grid.add(taskName, 1, 0);
         grid.add(new Label("Enable: "), 0, 1);
@@ -63,29 +64,26 @@ public class LogTodayAuto {
     public void checkBox(){
         autoEnable.setOnAction(event->{
             if(autoEnable.isSelected()) {
+                LocalDate autoLogTime = datePicker.getValue();
                 taskName.setDisable(true);
                 datePicker.setDisable(true);
-                if (timeline != null) {
-                    splitTime = Duration.ZERO;
-                    splitTimeSeconds.set(splitTime.toSeconds());
-                } else {
                     timeline = new Timeline(
                             new KeyFrame(Duration.seconds(1),
-                                    t -> {
-                                        Duration duration = ((KeyFrame) t.getSource()).getTime();
-                                        time = time.subtract(duration);
-                                        timeSeconds.set(time.toSeconds());
+                                    ev -> {
+                                        Duration duration = ((KeyFrame) ev.getSource()).getTime();
+                                        t = t.subtract(duration);
+                                        time = LocalTime.ofSecondOfDay((long)t.toSeconds());
+                                        stringProperty.set(time.format(SHORT_TIME_FORMATTER));
                                     })
                     );
 
-                    timeline.setCycleCount(Timeline.INDEFINITE);
+                    timeline.setCycleCount(Animation.INDEFINITE);
                     timeline.play();
-                    int seconds = (int) timeSeconds.getValue().doubleValue();
-                    timerLabel.textProperty().setValue(String.format("%d:%02d:%02d",seconds/ 3600, (seconds % 3600) / 60, (seconds % 60)));
+                    timerLabel.textProperty().bind(stringProperty);
                     timerLabel.setTextFill(Color.RED);
-                    timerLabel.setStyle("-fx-font-size: 4em;");
+                    timerLabel.setStyle("-fx-font-size: 3em;");
                 }
-            }
+
             else {
                 timeline.stop();
                 taskName.setDisable(false);

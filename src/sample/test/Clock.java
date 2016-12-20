@@ -2,13 +2,13 @@ package sample.test;
 
 
  import javafx.animation.Animation;
- import javafx.animation.KeyFrame;
- import javafx.animation.Timeline;
- import javafx.scene.control.Label;
- import javafx.util.Duration;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.scene.control.Label;
+import javafx.util.Duration;
 
- import java.time.LocalTime;
- import java.time.format.DateTimeFormatter;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
     public class Clock extends Label {
         private static DateTimeFormatter SHORT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");

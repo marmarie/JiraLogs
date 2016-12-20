@@ -1,7 +1,6 @@
 package sample;
 
 import com.jfoenix.controls.JFXDatePicker;
-import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
@@ -14,7 +13,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
@@ -29,8 +27,8 @@ public class LogTodayAuto {
     JFXDatePicker datePicker = new JFXDatePicker();
     private Label timerLabel = new Label();
     private static DateTimeFormatter SHORT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
-    LocalTime time = LocalTime.now();
-    Duration t = Duration.valueOf(time.toSecondOfDay()+"s");
+  //  LocalTime time = LocalTime.now();
+  Duration t ;
     private StringProperty stringProperty = new SimpleStringProperty();
 
 
@@ -64,7 +62,8 @@ public class LogTodayAuto {
     public void checkBox(){
         autoEnable.setOnAction(event->{
             if(autoEnable.isSelected()) {
-                LocalDate autoLogTime = datePicker.getValue();
+                final LocalTime[] autoLogTime = {datePicker.getTime()};
+                t = Duration.valueOf(autoLogTime[0].toSecondOfDay()-LocalTime.now().toSecondOfDay()+"s");
                 taskName.setDisable(true);
                 datePicker.setDisable(true);
                     timeline = new Timeline(
@@ -72,16 +71,16 @@ public class LogTodayAuto {
                                     ev -> {
                                         Duration duration = ((KeyFrame) ev.getSource()).getTime();
                                         t = t.subtract(duration);
-                                        time = LocalTime.ofSecondOfDay((long)t.toSeconds());
-                                        stringProperty.set(time.format(SHORT_TIME_FORMATTER));
+                                        autoLogTime[0] = LocalTime.ofSecondOfDay((long)t.toSeconds());
+                                        stringProperty.set(autoLogTime[0].format(SHORT_TIME_FORMATTER));
                                     })
                     );
 
-                    timeline.setCycleCount(Animation.INDEFINITE);
+                    timeline.setCycleCount(datePicker.getTime().toSecondOfDay()-LocalTime.now().toSecondOfDay());
                     timeline.play();
                     timerLabel.textProperty().bind(stringProperty);
                     timerLabel.setTextFill(Color.RED);
-                    timerLabel.setStyle("-fx-font-size: 3em;");
+                  //  timerLabel.setStyle("-fx-font-size: 3em;");
                 }
 
             else {

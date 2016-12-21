@@ -28,7 +28,7 @@ public class LogTodayAuto {
     private Label timerLabel = new Label();
     private static DateTimeFormatter SHORT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
   //  LocalTime time = LocalTime.now();
-  Duration t ;
+     Duration t ;
     private StringProperty stringProperty = new SimpleStringProperty();
 
 
@@ -50,7 +50,6 @@ public class LogTodayAuto {
     public void addElementsToGrid(){
         checkBox();
 
-
         grid.add(new Label("Task id: "), 0, 0);
         grid.add(taskName, 1, 0);
         grid.add(new Label("Enable: "), 0, 1);
@@ -63,26 +62,37 @@ public class LogTodayAuto {
         autoEnable.setOnAction(event->{
             if(autoEnable.isSelected()) {
                 final LocalTime[] autoLogTime = {datePicker.getTime()};
-                t = Duration.valueOf(autoLogTime[0].toSecondOfDay()-LocalTime.now().toSecondOfDay()+"s");
+                if(autoLogTime[0].isBefore(LocalTime.now())) {
+                    t = Duration.valueOf(autoLogTime[0].toSecondOfDay()-LocalTime.now().toSecondOfDay()+86400+"s");
+                }
+                else {
+                    t = Duration.valueOf(autoLogTime[0].toSecondOfDay() - LocalTime.now().toSecondOfDay() + "s");
+                }
                 taskName.setDisable(true);
                 datePicker.setDisable(true);
                     timeline = new Timeline(
                             new KeyFrame(Duration.seconds(1),
                                     ev -> {
                                         Duration duration = ((KeyFrame) ev.getSource()).getTime();
+
                                         t = t.subtract(duration);
-                                        autoLogTime[0] = LocalTime.ofSecondOfDay((long)t.toSeconds());
-                                        stringProperty.set(autoLogTime[0].format(SHORT_TIME_FORMATTER));
+                                        if(t.toSeconds()==0){
+                                            t = Duration.valueOf(86400+"s");
+                                            stringProperty.set("Log!");
+                                        }
+                                        else {
+                                            autoLogTime[0] = LocalTime.ofSecondOfDay((long) t.toSeconds());
+                                            stringProperty.set(autoLogTime[0].format(SHORT_TIME_FORMATTER));
+                                        }
                                     })
                     );
+                    //(int)t.toSeconds()
 
-                    timeline.setCycleCount(datePicker.getTime().toSecondOfDay()-LocalTime.now().toSecondOfDay());
+                    timeline.setCycleCount(Timeline.INDEFINITE);
                     timeline.play();
                     timerLabel.textProperty().bind(stringProperty);
                     timerLabel.setTextFill(Color.RED);
-                  //  timerLabel.setStyle("-fx-font-size: 3em;");
                 }
-
             else {
                 timeline.stop();
                 taskName.setDisable(false);

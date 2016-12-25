@@ -19,6 +19,7 @@ import sample.utils.TestHttp;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Created by Ali on 13.12.2016.
@@ -113,6 +114,7 @@ public class LogTodayAuto {
                                         if(t.toSeconds()==0){
                                             t = Duration.valueOf(86400+"s");
                                             stringProperty.set("Log!");
+                                            CompletableFuture.supplyAsync(() -> {
                                             try {
                                                 TestHttp.logWork(LoginPage3.getUserPreferences().getCredentials(), Helper.getIssue(taskName.getText(),"8h"));
                                             } catch (JSONException e) {
@@ -122,6 +124,8 @@ public class LogTodayAuto {
                                                 System.out.println("IO");
                                                 e.printStackTrace();
                                             }
+                                            return 0;
+                                        });
                                         }
                                         else {
                                             autoLogTime[0] = LocalTime.ofSecondOfDay((long) t.toSeconds());

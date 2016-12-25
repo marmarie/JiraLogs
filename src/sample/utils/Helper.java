@@ -87,5 +87,26 @@ public class Helper {
         return daysOff.contains(day);
     }
 
+    public static boolean isCorrectTaskId(String allText){
+        if(allText.matches("^[a-zA-Z]{3}-\\d{1,}"))
+            return true;
+        else
+            return false;
+    }
+
+    public static boolean isCorrectInputForTaskId(String value, String t){
+        String allText = value+t;
+        if(allText.matches("^[a-zA-Z]{1,3}"))
+            return true;
+        if(value.matches("^[a-zA-Z]{3}")&&(t.equals("-")||t.isEmpty()))
+            return true;
+        if(value.matches("^[a-zA-Z]{3}-|^[a-zA-Z]{3}-\\d{1,}")&&(t.matches("^\\d{1,}")||t.isEmpty()))
+            return true;
+        if(isCorrectTaskId(t))
+            return true;
+        else
+            return false;
+    }
+
 
 }

@@ -25,7 +25,6 @@ import java.time.format.DateTimeFormatter;
  */
 public class LogTodayAuto {
     private Timeline timeline;
-    TextField taskName = new TextField();
     GridPane grid= new GridPane();
     CheckBox autoEnable = new CheckBox();
     JFXDatePicker datePicker = new JFXDatePicker();
@@ -34,6 +33,17 @@ public class LogTodayAuto {
     private static DateTimeFormatter SHORT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
      Duration t ;
     private StringProperty stringProperty = new SimpleStringProperty();
+
+    TextField taskName = new TextField(){
+        @Override
+        public void replaceText(int start, int end, String text) {
+            if (Helper.isCorrectInputForTaskId(taskName.getText(),text)) {
+                super.replaceText(start, end, text);
+
+            }
+        }
+    };
+
 
 
 
@@ -54,12 +64,17 @@ public class LogTodayAuto {
     private void enableCheckBox(){
         taskName.setOnKeyTyped(event -> {
             String newText = event.getCharacter();
-            if((!taskName.getText().isEmpty()||!newText.isEmpty())&&datePicker.getTime()!=null){
+            if(Helper.isCorrectTaskId(taskName.getText()+newText)&&datePicker.getTime()!=null)
                 autoEnable.setDisable(false);
-            }
-            else {
+            else
                 autoEnable.setDisable(true);
-            }
+        });
+
+        datePicker.setOnMouseExited(event -> {
+            if(Helper.isCorrectTaskId(taskName.getText())&&datePicker.getTime()!=null)
+                autoEnable.setDisable(false);
+            else
+                autoEnable.setDisable(true);
         });
     }
 

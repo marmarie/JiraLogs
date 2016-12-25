@@ -12,7 +12,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
+import org.json.JSONException;
+import sample.utils.Helper;
+import sample.utils.TestHttp;
 
+import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
@@ -25,29 +29,44 @@ public class LogTodayAuto {
     GridPane grid= new GridPane();
     CheckBox autoEnable = new CheckBox();
     JFXDatePicker datePicker = new JFXDatePicker();
+
     private Label timerLabel = new Label();
     private static DateTimeFormatter SHORT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
-  //  LocalTime time = LocalTime.now();
      Duration t ;
     private StringProperty stringProperty = new SimpleStringProperty();
 
 
 
     public GridPane getContent(){
+        autoEnable.setDisable(true);
         datePicker.setShowTime(true);
         setGrid();
         addElementsToGrid();
+        enableCheckBox();
         return grid;
     }
-    public void setGrid(){
+    private void setGrid(){
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20, 20, 20, 10));
     }
 
+    private void enableCheckBox(){
+        taskName.setOnKeyTyped(event -> {
+            String newText = event.getCharacter();
+            if((!taskName.getText().isEmpty()||!newText.isEmpty())&&datePicker.getTime()!=null){
+                autoEnable.setDisable(false);
+            }
+            else {
+                autoEnable.setDisable(true);
+            }
+        });
+    }
 
 
-    public void addElementsToGrid(){
+
+    private void addElementsToGrid(){
+        datePicker.setEditable(false);
         checkBox();
 
         grid.add(new Label("Task id: "), 0, 0);
@@ -58,7 +77,7 @@ public class LogTodayAuto {
         grid.add(timerLabel, 1, 3);
     }
 
-    public void checkBox(){
+    private void checkBox(){
         autoEnable.setOnAction(event->{
             if(autoEnable.isSelected()) {
                 final LocalTime[] autoLogTime = {datePicker.getTime()};
@@ -79,6 +98,15 @@ public class LogTodayAuto {
                                         if(t.toSeconds()==0){
                                             t = Duration.valueOf(86400+"s");
                                             stringProperty.set("Log!");
+                                            try {
+                                                TestHttp.logWork(LoginPage3.getUserPreferences().getCredentials(), Helper.getIssue(taskName.getText(),"8h"));
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                                System.out.println("Json");
+                                            } catch (IOException e) {
+                                                System.out.println("IO");
+                                                e.printStackTrace();
+                                            }
                                         }
                                         else {
                                             autoLogTime[0] = LocalTime.ofSecondOfDay((long) t.toSeconds());

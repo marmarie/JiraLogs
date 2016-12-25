@@ -1,27 +1,32 @@
 package sample;
 
-import com.sun.javafx.sg.prism.EffectFilter;
 import javafx.event.ActionEvent;
-import javafx.geometry.BoundingBox;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.effect.Effect;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.GridPane;
 import sample.utils.Helper;
 import sample.utils.TestHttp;
 
-import java.awt.*;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Created by marie on 08.12.16.
  */
 public class LogDaysContent {
 
-    TextField taskName = new TextField();
+    TextField taskName = new TextField(){
+        @Override
+        public void replaceText(int start, int end, String text) {
+            if (Helper.isCorrectInputForTaskId(taskName.getText(),text)) {
+                super.replaceText(start, end, text);
+
+            }
+        }
+    };
+
+
     TextField taskTime = new TextField(){
         @Override
         public void replaceText(int start, int end, String text) {
@@ -48,14 +53,21 @@ public class LogDaysContent {
             String taskT = taskTime.getText();
 
             logWork.setDisable(true);
-            try {
-                TestHttp.logWork(LoginPage3.getUserPreferences().getCredentials(), Helper.getIssue(taskN, taskT));
-                grid.add(new Label("Logged " + taskTime.getText() + " to " + taskName.getText()), 1, 3);
-                logWork.setDisable(false);
-            } catch (Exception e) {
-                grid.add(new Label(e.getCause().toString()), 1, 3);
-            }
+            taskName.setDisable(true);
+            taskTime.setDisable(true);
+            CompletableFuture.supplyAsync(() -> {
+                try {
+                    TestHttp.logWork(LoginPage3.getUserPreferences().getCredentials(), Helper.getIssue(taskN, taskT));
+                    grid.add(new Label("Logged " + taskTime.getText() + " to " + taskName.getText()), 1, 3);
+                } catch (Exception e) {
+                    grid.add(new Label(e.getCause().toString()), 1, 3);
+                }
 
+                return 0;
+            });
+            logWork.setDisable(false);
+            taskName.setDisable(false);
+            taskTime.setDisable(false);
         });
     }
 
@@ -95,14 +107,30 @@ public class LogDaysContent {
 
     public GridPane getContent(){
         setGrid();
-        taskName.setPromptText(" AUT-999");
+        logWork.setDisable(true);
+        taskName.setPromptText("AUT-999");
         taskTime.setPromptText("e.g. 1d 1h 1m");
-
+        enableLogWork();
         logTime();
         addElementsToGrid();
 
        return grid;
     }
 
+    private void enableLogWork(){
+        taskName.setOnKeyTyped(event -> {
+            String newText = event.getCharacter();
+            if(Helper.isCorrectTaskId(taskName.getText()+newText)&&!taskTime.getText().isEmpty())
+                logWork.setDisable(false);
+            else
+                logWork.setDisable(true);
+        });
 
+        taskTime.setOnKeyTyped(event -> {
+            if(Helper.isCorrectTaskId(taskName.getText())&&!taskTime.getText().isEmpty())
+                logWork.setDisable(false);
+            else
+                logWork.setDisable(true);
+        });
+    }
 }

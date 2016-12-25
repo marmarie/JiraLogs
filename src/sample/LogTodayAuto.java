@@ -60,6 +60,7 @@ public class LogTodayAuto {
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20, 20, 20, 10));
+        taskName.setPromptText("AUT-999");
     }
 
     private void enableCheckBox(){

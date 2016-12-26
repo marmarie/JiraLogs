@@ -38,6 +38,8 @@ public class LoginPage3 extends Application {
         Pane root = new Pane();
         Scene scene = new Scene(root, 350, 300);
         primaryStage.setTitle("Jira");
+        primaryStage.setResizable(false);
+        primaryStage.setFullScreen(false);
 
 
         Button loginButton = new Button("Login");

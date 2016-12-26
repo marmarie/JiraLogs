@@ -9,12 +9,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Locale;
@@ -31,8 +33,17 @@ private static final String iconImageLoc =
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        com.apple.eawt.Application.getApplication().setDockIconImage(new ImageIcon(iconImageLoc).getImage());
         this.primaryStage = primaryStage;
         Locale.setDefault(Locale.ENGLISH);
+        primaryStage.setFullScreen(false);
+        primaryStage.setResizable(false);
+        primaryStage.getIcons().add(new Image(iconImageLoc));
+
+
+
+
+
 
         // instructs the javafx system not to exit implicitly when the last application window is shut.
         Platform.setImplicitExit(false);
@@ -70,7 +81,6 @@ private static final String iconImageLoc =
         borderPane.setLeft(tabPane);
         root.getChildren().add(borderPane);
         primaryStage.setScene(scene);
-
         primaryStage.show();
 
     }
@@ -131,16 +141,12 @@ private static final String iconImageLoc =
         }
     }
 
-
-
-
     private Tab getTabDays(String name){
         Tab tabD = new Tab();
         tabD.setClosable(false);
         tabD.setGraphic(new Label(name));
         return tabD;
     }
-
 
 
     /**

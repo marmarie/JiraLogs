@@ -24,11 +24,10 @@ import java.util.Locale;
 /**
  * Created by marie on 05.12.16.
  */
-public class LogJiraWorkUI extends Application {
+  public class LogJiraWorkUI extends Application {
     Stage primaryStage ;
-private static final String iconImageLoc =
+  private static final String iconImageLoc =
         "http://icons.iconarchive.com/icons/scafer31000/bubble-circle-3/16/GameCenter-icon.png";
-
 
 
     @Override
@@ -39,11 +38,6 @@ private static final String iconImageLoc =
         primaryStage.setFullScreen(false);
         primaryStage.setResizable(false);
         primaryStage.getIcons().add(new Image(iconImageLoc));
-
-
-
-
-
 
         // instructs the javafx system not to exit implicitly when the last application window is shut.
         Platform.setImplicitExit(false);

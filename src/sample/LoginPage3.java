@@ -14,6 +14,9 @@ import structure.model.UserPreferences;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import static sample.utils.FileReader.getCredentialsFromFile;
 import static sample.utils.Helper.encodeCredentials;
@@ -27,11 +30,16 @@ import static sample.utils.TestHttp.basicAuthorization;
 public class LoginPage3 extends Application {
 
     static UserPreferences userPreferences = new UserPreferences();
-
     Integer result;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
+        try {
+            LogManager.getLogManager().readConfiguration(LoginPage3.class.getResourceAsStream("logging.properties"));
+        } catch (IOException e) {
+            System.err.println("Could not setup logger configuration: " + e.toString());
+        }
 
         final int[] code = {0};
         // Create the custom dialog.
@@ -40,7 +48,6 @@ public class LoginPage3 extends Application {
         primaryStage.setTitle("Jira");
         primaryStage.setResizable(false);
         primaryStage.setFullScreen(false);
-
 
         Button loginButton = new Button("Login");
 
@@ -57,7 +64,6 @@ public class LoginPage3 extends Application {
         ProgressIndicator progressIndicator = new ProgressIndicator();
         progressIndicator.setVisible(false);
 
-
         grid.add(new Label("Username:"), 0, 0);
         grid.add(username, 1, 0);
         grid.add(new Label("Password:"), 0, 1);
@@ -71,10 +77,7 @@ public class LoginPage3 extends Application {
 
         root.getChildren().setAll(grid);
         // Do some validation (using the Java 8 lambda syntax).
-        username.textProperty().addListener((observable, oldValue, newValue) ->
-        {
-            loginButton.setDisable(newValue.trim().isEmpty());
-        });
+        username.textProperty().addListener((observable, oldValue, newValue) -> loginButton.setDisable(newValue.trim().isEmpty()));
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -85,22 +88,26 @@ public class LoginPage3 extends Application {
             loginButton.setDisable(false);
             saveCredentials.setVisible(false);
         }
-
-
         loginButton.setOnAction((ActionEvent event) -> {
+            Logger.getAnonymousLogger().log(Level.INFO, "jdjddjd");
 
             progressIndicator.setVisible(true);
+
             loginButton.setDisable(true);
             userPreferences.setUserName(username.getText());
+            Logger.getAnonymousLogger().log(Level.INFO, "saved to UP" + username.getText());
             userPreferences.setCredentials(encodeCredentials(username.getText() + ":" + password.getText()));
+            Logger.getAnonymousLogger().log(Level.INFO, "set creds");
 
                 CompletableFuture.supplyAsync(() -> {
+                    Logger.getAnonymousLogger().log(Level.INFO, "supplyAsync");
                     try {
                         result = basicAuthorization(userPreferences);
+                        Logger.getAnonymousLogger().log(Level.INFO, "basic AUthorization");
                         progressIndicator.setVisible(false);
 
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Logger.getAnonymousLogger().log(Level.INFO, e.getMessage());
                     }
                     Platform.runLater(() -> {
                         if (result == 200) {
@@ -108,14 +115,14 @@ public class LoginPage3 extends Application {
                                 try {
                                     FileReader.saveUserPreferences(userPreferences);
                                 } catch (Exception e) {
-                                    e.printStackTrace();
+                                    Logger.getAnonymousLogger().log(Level.INFO, e.getMessage());
                                 }
                             }
                             try {
                                 new LogJiraWorkUI().start(new Stage());
                                 primaryStage.close();
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                Logger.getAnonymousLogger().log(Level.INFO, e.getMessage());
                             }
                         } else{
                             new Alert(Alert.AlertType.INFORMATION, "Code " + String.valueOf(result)).show();
@@ -123,13 +130,8 @@ public class LoginPage3 extends Application {
                     });
                     loginButton.setDisable(false);
                     return result;
-
                 });
-
         });
-
-
-
     }
 
     public static UserPreferences getUserPreferences(){

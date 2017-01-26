@@ -20,6 +20,10 @@ import structure.model.Worklog;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 
 import static sample.utils.Helper.*;
@@ -82,9 +86,7 @@ public class TestHttp  {
 
     public static HashMap<String, String> getLogWork(String credentials, int days) throws IOException {
         HashMap<String, String> hashMap = new HashMap<>();
-        putCredentials(credentials);
-        String
-                json = post(headersMap, "https://jira.ringcentral.com/rest/timesheet-gadget/1.0/raw-timesheet.json?targetUser=" + getUserName(credentials) + "&startDate=" + getDate(days));
+        String json = getJson(credentials,days);
 
         Worklog[] w = new ObjectMapper().readValue(json, Result.class).getWorklog();
         for (Worklog worklog : w) {
@@ -100,6 +102,35 @@ public class TestHttp  {
         }
         return hashMap;
     }
+
+    public static HashMap<String, String> getLogWork(String credentials, LocalDate startDate, LocalDate endDate) throws IOException {
+        HashMap<String, String> hashMap = new HashMap<>();
+        int days = (int) ChronoUnit.DAYS.between(startDate, LocalDate.now());
+        String json = getJson(credentials, days);
+
+        Worklog[] w = new ObjectMapper().readValue(json, Result.class).getWorklog();
+        for (Worklog worklog : w) {
+            Entries[] entries = worklog.getEntries();
+            for (Entries entry : entries) {
+                LocalDate date = Instant.ofEpochMilli(Long.valueOf(entry.getStartDate())).atZone(ZoneId.systemDefault()).toLocalDate();
+                if (ChronoUnit.DAYS.between(date, endDate)>0) {
+                    if (hashMap.containsKey(date.toString())) {
+                        String fullDate = String.valueOf(Long.valueOf(hashMap.get(date.toString())) + Long.valueOf(entry.getTimeSpent()));
+                        hashMap.put(date.toString(), fullDate);
+                    } else
+                        hashMap.put(date.toString(), entry.getTimeSpent());
+                }
+            }
+        }
+        return hashMap;
+    }
+
+    private static String getJson(String credentials,int days) throws IOException {
+        putCredentials(credentials);
+        String json = post(headersMap, "https://jira.ringcentral.com/rest/timesheet-gadget/1.0/raw-timesheet.json?targetUser=" + getUserName(credentials) + "&startDate=" + getDate(days));
+        return json;
+    }
+
 
     public static int basicAuthorization(UserPreferences userPreferences) throws IOException {
         putCredentials(userPreferences.getCredentials());
@@ -144,6 +175,21 @@ public class TestHttp  {
         JiraIssue needLogJira = new JiraIssue();
         needLogJira.setId(basicIssueId);
         HashMap<String, String> data = getCalendarDays(days);
+        for (String id : data.keySet()) {
+            if (dateAndLogTime.keySet().contains(id) && !dateAndLogTime.get(id).equals("28800")) {
+                String leftToLog = String.valueOf(28800L - Long.parseLong(dateAndLogTime.get(id)));
+                needLogJira.addWorkLog(id, leftToLog);
+            } else if (!dateAndLogTime.containsKey(id)) {
+                needLogJira.addWorkLog(id, data.get(id));
+            }
+        }
+        return needLogJira;
+    }
+
+    public static JiraIssue getIssueListForLog(String basicIssueId, HashMap<String, String> dateAndLogTime, LocalDate startDate, LocalDate localEndDate) {
+        JiraIssue needLogJira = new JiraIssue();
+        needLogJira.setId(basicIssueId);
+        HashMap<String, String> data = getCalendarDays(startDate,localEndDate);
         for (String id : data.keySet()) {
             if (dateAndLogTime.keySet().contains(id) && !dateAndLogTime.get(id).equals("28800")) {
                 String leftToLog = String.valueOf(28800L - Long.parseLong(dateAndLogTime.get(id)));

@@ -16,7 +16,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Locale;
@@ -32,7 +31,7 @@ import java.util.Locale;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        com.apple.eawt.Application.getApplication().setDockIconImage(new ImageIcon(iconImageLoc).getImage());
+//        com.apple.eawt.Application.getApplication().setDockIconImage(new ImageIcon(iconImageLoc).getImage());
         this.primaryStage = primaryStage;
         Locale.setDefault(Locale.ENGLISH);
         primaryStage.setFullScreen(false);

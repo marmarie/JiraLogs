@@ -23,6 +23,7 @@ public class LogMonthContent {
     Button logWork = new Button("Log Work");
     GridPane grid= new GridPane();
     private DatePicker checkInDatePicker = new DatePicker();
+    private DatePicker checkInEndDatePicker = new DatePicker();
 
     TextField taskName = new TextField(){
         @Override
@@ -56,9 +57,11 @@ public class LogMonthContent {
         grid.add(new Label("Task id: "), 0, 0);
         grid.add(taskName, 1, 0);
         grid.add(new Label("Start date: "), 0, 1);
-
         grid.add(checkInDatePicker, 1, 1);
-        grid.add(logWork, 1, 2);
+
+        grid.add(new Label("End date: "), 0, 2);
+        grid.add(checkInEndDatePicker, 1, 2);
+        grid.add(logWork, 1, 3);
 
     }
 
@@ -85,16 +88,16 @@ public class LogMonthContent {
         checkInDatePicker.setDayCellFactory(dayCellFactory);
     }
 
-    private void logDays(LocalDate localDate) throws IOException, JSONException {
+    private void logDays(LocalDate localDate,LocalDate localEndDate) throws IOException, JSONException {
         String basicIssue = taskName.getText();
         String cred = LoginPage3.getUserPreferences().getCredentials();
-        long days = ChronoUnit.DAYS.between(localDate, LocalDate.now());
+        long days = ChronoUnit.DAYS.between(localDate, localEndDate);
         System.out.println(days);
 
 
-        HashMap<String,String> dateAndLogTime = TestHttp.getLogWork(cred,Integer.parseInt(String.valueOf(days)));
+        HashMap<String,String> dateAndLogTime = TestHttp.getLogWork(cred,localDate,localEndDate);
         System.out.println(dateAndLogTime.toString());
-        JiraIssue issueToLog = TestHttp.getIssueListForLog(basicIssue,dateAndLogTime,Integer.parseInt(String.valueOf(days)));
+        JiraIssue issueToLog = TestHttp.getIssueListForLog(basicIssue,dateAndLogTime,localDate,localEndDate );
         System.out.println(issueToLog.getWorkLogs());
         //TestHttp.logWork(cred,issueToLog);
     }
@@ -104,9 +107,10 @@ public class LogMonthContent {
             taskName.setDisable(true);
             logWork.setDisable(true);
             checkInDatePicker.setDisable(true);
+            checkInEndDatePicker.setDisable(true);
             CompletableFuture.supplyAsync(() -> {
                         try {
-                            logDays(checkInDatePicker.getValue());
+                            logDays(checkInDatePicker.getValue(),checkInEndDatePicker.getValue());
 
                         } catch (Exception e) {
                             grid.add(new Label(e.toString()), 1, 3);
@@ -116,6 +120,7 @@ public class LogMonthContent {
             logWork.setDisable(false);
             taskName.setDisable(false);
             checkInDatePicker.setDisable(false);
+            checkInEndDatePicker.setDisable(false);
         });
     }
 
@@ -134,6 +139,14 @@ public class LogMonthContent {
             else
                 logWork.setDisable(true);
         });
+
+        checkInEndDatePicker.setOnKeyTyped(event -> {
+            if(Helper.isCorrectTaskId(taskName.getText()))
+                logWork.setDisable(false);
+            else
+                logWork.setDisable(true);
+        });
+
     }
 
 }

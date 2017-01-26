@@ -4,6 +4,8 @@ import org.apache.commons.codec.binary.Base64;
 import structure.JiraIssue;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static sample.utils.JiraBasicRest.DATE;
@@ -17,8 +19,8 @@ public class Helper {
     static ArrayList<String> daysOff = new ArrayList<>();
 
     static  {
-        daysOff.add("Sunday");
-        daysOff.add("Saturday");
+        daysOff.add("sunday");
+        daysOff.add("saturday");
 
 
     }
@@ -81,10 +83,26 @@ public class Helper {
         }
         return data;
     }
+
+    public static HashMap<String, String> getCalendarDays(LocalDate startDate, LocalDate localEndDate) {
+        LinkedHashMap<String, String> data = new LinkedHashMap<>();
+        long days = ChronoUnit.DAYS.between(startDate, localEndDate);
+        for (int counter = 0; counter <= days; counter++) {
+            LocalDate temp =  localEndDate.minusDays(counter);
+            if (!isDateOFF(temp))
+                data.put(temp.toString(), "28800");
+        }
+        return data;
+    }
+
+    private static boolean isDateOFF(LocalDate localEndDate) {
+        return daysOff.contains(localEndDate.getDayOfWeek().toString().toLowerCase());
+    }
+
     private static boolean isDateOFF(Calendar calendar) {
         SimpleDateFormat format = new SimpleDateFormat("EEEE", Locale.ENGLISH);
         String day = format.format(calendar.getTime());
-        return daysOff.contains(day);
+        return daysOff.contains(day.toLowerCase());
     }
 
     public static boolean isCorrectTaskId(String allText){

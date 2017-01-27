@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Ali on 13.12.2016.
@@ -29,10 +31,10 @@ public class LogTodayAuto {
     GridPane grid= new GridPane();
     CheckBox autoEnable = new CheckBox();
     JFXDatePicker datePicker = new JFXDatePicker();
+    Duration t ;
 
     private Label timerLabel = new Label();
     private static DateTimeFormatter SHORT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
-     Duration t ;
     private StringProperty stringProperty = new SimpleStringProperty();
 
     TextField taskName = new TextField(){
@@ -44,9 +46,6 @@ public class LogTodayAuto {
             }
         }
     };
-
-
-
 
     public GridPane getContent(){
         autoEnable.setDisable(true);
@@ -79,8 +78,6 @@ public class LogTodayAuto {
                 autoEnable.setDisable(true);
         });
     }
-
-
 
     private void addElementsToGrid(){
         datePicker.setEditable(false);
@@ -119,11 +116,9 @@ public class LogTodayAuto {
                                             try {
                                                 TestHttp.logWork(LoginPage3.getUserPreferences().getCredentials(), Helper.getIssue(taskName.getText(),"8h"));
                                             } catch (JSONException e) {
-                                                e.printStackTrace();
-                                                System.out.println("Json");
+                                                Logger.getAnonymousLogger().log(Level.INFO, e.getMessage());
                                             } catch (IOException e) {
-                                                System.out.println("IO");
-                                                e.printStackTrace();
+                                                Logger.getAnonymousLogger().log(Level.INFO, e.getMessage());
                                             }
                                             return 0;
                                         });

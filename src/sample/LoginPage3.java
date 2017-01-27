@@ -103,7 +103,7 @@ public class LoginPage3 extends Application {
                     Logger.getAnonymousLogger().log(Level.INFO, "supplyAsync");
                     try {
                         result = basicAuthorization(userPreferences);
-                        Logger.getAnonymousLogger().log(Level.INFO, "basic AUthorization");
+                        Logger.getAnonymousLogger().log(Level.INFO, "basic Authorization");
                         progressIndicator.setVisible(false);
 
                     } catch (IOException e) {

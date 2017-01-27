@@ -13,6 +13,8 @@ import sample.utils.FileReader;
 import structure.model.UserPreferences;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static sample.utils.FileReader.getCredentialsFromFile;
 import static sample.utils.Helper.encodeCredentials;
@@ -24,7 +26,6 @@ import static sample.utils.TestHttp.basicAuthorization;
  */
 public class LoginPage2 extends Application {
     UserPreferences userPreferences = new UserPreferences();
-
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -94,7 +95,7 @@ public class LoginPage2 extends Application {
                 try {
                     code = basicAuthorization(userPreferences);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Logger.getAnonymousLogger().log(Level.INFO, e.getMessage());
                 }
 
                 int finalCode = code;

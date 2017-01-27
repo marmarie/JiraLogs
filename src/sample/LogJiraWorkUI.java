@@ -19,15 +19,15 @@ import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by marie on 05.12.16.
  */
   public class LogJiraWorkUI extends Application {
     Stage primaryStage ;
-  private static final String iconImageLoc =
-        "http://icons.iconarchive.com/icons/scafer31000/bubble-circle-3/16/GameCenter-icon.png";
-
+    private static final String iconImageLoc = "http://icons.iconarchive.com/icons/scafer31000/bubble-circle-3/16/GameCenter-icon.png";
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -129,8 +129,8 @@ import java.util.Locale;
             // add the application tray icon to the system tray.
             tray.add(trayIcon);
         } catch (java.awt.AWTException | IOException e) {
-            System.out.println("Unable to init system tray");
-            e.printStackTrace();
+            System.out.println();
+            Logger.getAnonymousLogger().log(Level.INFO, "Unable to init system tray"  +e.getMessage());
         }
     }
 

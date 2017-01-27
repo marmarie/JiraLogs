@@ -25,6 +25,8 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static sample.utils.Helper.*;
 
@@ -142,7 +144,7 @@ public class TestHttp  {
             }
         }
         catch (Exception ex) {
-            ex.printStackTrace();
+            Logger.getAnonymousLogger().log(Level.INFO, ex.getMessage());
         }
         return 0;
     }
@@ -162,9 +164,9 @@ public class TestHttp  {
                         sb.append(line);
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Logger.getAnonymousLogger().log(Level.INFO, e.getMessage());
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Logger.getAnonymousLogger().log(Level.INFO, e.getMessage());
                 }
             }
         }

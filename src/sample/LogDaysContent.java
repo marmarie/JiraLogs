@@ -21,7 +21,6 @@ public class LogDaysContent {
         public void replaceText(int start, int end, String text) {
             if (Helper.isCorrectInputForTaskId(taskName.getText(),text)) {
                 super.replaceText(start, end, text);
-
             }
         }
     };
@@ -62,7 +61,6 @@ public class LogDaysContent {
                 } catch (Exception e) {
                     grid.add(new Label(e.getCause().toString()), 1, 3);
                 }
-
                 return 0;
             });
             logWork.setDisable(false);
@@ -70,8 +68,6 @@ public class LogDaysContent {
             taskTime.setDisable(false);
         });
     }
-
-
 
     public void setGrid(){
         grid.setHgap(10);
@@ -101,10 +97,6 @@ public class LogDaysContent {
             return false;
     }
 
-
-
-
-
     public GridPane getContent(){
         setGrid();
         logWork.setDisable(true);
@@ -113,7 +105,6 @@ public class LogDaysContent {
         enableLogWork();
         logTime();
         addElementsToGrid();
-
        return grid;
     }
 

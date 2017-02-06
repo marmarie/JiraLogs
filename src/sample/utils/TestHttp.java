@@ -2,6 +2,7 @@ package sample.utils;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import org.apache.http.HttpRequest;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -25,13 +26,17 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.jayway.jsonpath.JsonPath.*;
+import static com.jayway.jsonpath.JsonPath.read;
 import static sample.utils.Helper.*;
 
 /**
- * Created by ali.naffaa and mariya.azoyan 18.08.2016.
+ * Created by ali.naffaa and mariya.azoyan 18.12.2016.
  */
 
 public class TestHttp  {
@@ -133,6 +138,24 @@ public class TestHttp  {
         return json;
     }
 
+    private static String getBugsJson() throws IOException{
+        putCredentials("");
+        String json = post(headersMap, "https://jira.ringcentral.com/rest/api/2/search?jql=issuetype%20%3D%20Bug%20and%20created%20%3E%20startOfDay(-0d)%20&fields%3Dkey,summary");
+        return json;
+    }
+
+    private static HashMap<String,String> getList() throws IOException{
+        String result = getBugsJson();
+        List<String> bugKeys =  read(result, "$.issues[*].key");
+        List<String> bugSummaries = read(result, "$.issues[*].fields.summary");
+        HashMap<String, String> allList = new LinkedHashMap<>();
+        int i=0;
+        for (String key : bugKeys){
+            allList.put(key, bugSummaries.get(i++));
+        }
+        return allList;
+    }
+
 
     public static int basicAuthorization(UserPreferences userPreferences) throws IOException {
         putCredentials(userPreferences.getCredentials());
@@ -163,8 +186,6 @@ public class TestHttp  {
                     while ((line = reader.readLine()) != null) {
                         sb.append(line);
                     }
-                } catch (IOException e) {
-                    Logger.getAnonymousLogger().log(Level.INFO, e.getMessage());
                 } catch (Exception e) {
                     Logger.getAnonymousLogger().log(Level.INFO, e.getMessage());
                 }
@@ -204,7 +225,13 @@ public class TestHttp  {
     }
 
 
-
+ public static void main(String...args){
+     try {
+         getList();
+     } catch (IOException e) {
+         e.printStackTrace();
+     }
+ }
 
 
 

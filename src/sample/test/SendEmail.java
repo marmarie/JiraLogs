@@ -1,17 +1,16 @@
 package sample.test;
 
 import java.util.Properties;
-import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
-import javax.activation.*;
 
 /**
  * Created by marie on 27.01.17.
  */
 public class SendEmail {
 
-    String jqlEmail = "issuetype = Bug and created > startOfDay(-0d) and reporter = \"user\"";
+    String jqlEmail = "https://jira.ringcentral.com/rest/api/2/search?jql=issuetype%20%3D%20Bug%20and%20reporter%3D"+ "USERNAME"+"%20and%20created%20%3E%20startOfDay(-0d)%20&fields=key,summary";
+    String request = "rest/api/2/search?jql=issuetype%20%3D%20Bug%20and%20created%20>%20startOfDay(-0d)%20&fields=key,summary";
     String bugURL, bugName;
     String email = "<a href=" + bugURL + ">"+ bugName +"</a>";
 
@@ -36,8 +35,7 @@ public class SendEmail {
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(username));
-            message.setRecipients(Message.RecipientType.TO,
-                    InternetAddress.parse(" "));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(" "));
             message.setSubject("New Bug");
             message.setContent("<a href=\"https://www.tutorialspoint.com/java/java_sending_email.htm\">Текст ссылки</a>", "text/html");
 //            message.setText("Dear Mail Crawler,"

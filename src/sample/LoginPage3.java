@@ -97,7 +97,7 @@ public class LoginPage3 extends Application {
             userPreferences.setUserName(username.getText());
             Logger.getAnonymousLogger().log(Level.INFO, "saved to UP" + username.getText());
             userPreferences.setCredentials(encodeCredentials(username.getText() + ":" + password.getText()));
-            Logger.getAnonymousLogger().log(Level.INFO, "set creds");
+            Logger.getAnonymousLogger().log(Level.INFO, "Set credentials");
 
                 CompletableFuture.supplyAsync(() -> {
                     Logger.getAnonymousLogger().log(Level.INFO, "supplyAsync");

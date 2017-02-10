@@ -46,7 +46,7 @@ import java.util.logging.Logger;
 
         primaryStage.setTitle("Tabs");
         Group root = new Group();
-        Scene scene = new Scene(root, 450, 250, Color.WHITE);
+        Scene scene = new Scene(root, 700, 700, Color.WHITE);
 
         TabPane tabPane = new TabPane();
 
@@ -55,6 +55,7 @@ import java.util.logging.Logger;
         Tab tabD = getTabDays("Log days");
         Tab tabS = getTabDays("Log Task");
         Tab logAuto = getTabDays("Auto Log");
+        Tab sendBug = getTabDays("Send Bug");
 
         HBox hbox = new HBox();
 
@@ -62,7 +63,8 @@ import java.util.logging.Logger;
         tabD.setContent(new LogMonthContent().getContent());
         tabS.setContent(new LogDaysContent().getContent());
         logAuto.setContent(new LogTodayAuto().getContent());
-        tabPane.getTabs().addAll(tabS,tabD,logAuto);
+        sendBug.setContent(new SendBug().getContent());
+        tabPane.getTabs().addAll(tabS,tabD,logAuto, sendBug);
 
         tabPane.setSide(Side.LEFT);
         tabPane.setTabMinWidth(30);

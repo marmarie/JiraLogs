@@ -12,6 +12,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.json.JSONException;
 import org.json.JSONObject;
+import sample.LoginPage3;
 import structure.JiraIssue;
 import structure.model.Entries;
 import structure.model.Result;
@@ -138,13 +139,18 @@ public class TestHttp  {
         return json;
     }
 
-    private static String getBugsJson() throws IOException{
+    private static String getBugsJson() {
+        String json = "";
         putCredentials("");
-        String json = post(headersMap, "https://jira.ringcentral.com/rest/api/2/search?jql=issuetype%20%3D%20Bug%20and%20created%20%3E%20startOfDay(-0d)%20&fields%3Dkey,summary");
+        try {
+            json = post(headersMap, "https://jira.ringcentral.com/rest/api/2/search?jql=issuetype%20%3D%20Bug%20and%20created%20%3E%20startOfDay(-0d)%20&fields=key,summary");
+        } catch (IOException e){
+            Logger.getAnonymousLogger().log(Level.WARNING, e.getMessage());
+        }
         return json;
     }
 
-    private static HashMap<String,String> getList() throws IOException{
+    public static HashMap<String,String> getList(){
         String result = getBugsJson();
         List<String> bugKeys =  read(result, "$.issues[*].key");
         List<String> bugSummaries = read(result, "$.issues[*].fields.summary");
@@ -226,11 +232,7 @@ public class TestHttp  {
 
 
  public static void main(String...args){
-     try {
-         getList();
-     } catch (IOException e) {
-         e.printStackTrace();
-     }
+
  }
 
 

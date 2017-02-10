@@ -42,7 +42,6 @@ public class LogTodayAuto {
         public void replaceText(int start, int end, String text) {
             if (Helper.isCorrectInputForTaskId(taskName.getText(),text)) {
                 super.replaceText(start, end, text);
-
             }
         }
     };

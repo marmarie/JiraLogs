@@ -41,7 +41,6 @@ public class LoginPage3 extends Application {
             System.err.println("Could not setup logger configuration: " + e.toString());
         }
 
-        final int[] code = {0};
         // Create the custom dialog.
         Pane root = new Pane();
         Scene scene = new Scene(root, 350, 300);

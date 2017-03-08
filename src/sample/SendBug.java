@@ -7,13 +7,11 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.MapValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import sample.utils.TestHttp;
-import structure.model.UserPreferences;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +23,7 @@ public class SendBug {
 
     Button loadBugs = new Button("Load bugs");
     Button sendBugs = new Button("Send Bugs");
+    Label testLAbel = new Label("BugList");
     TextField email = new TextField(LoginPage3.userPreferences.getUserName() + "@ab-soft.net");
     public static final String Column1MapKey = "A";
     public static final String Column2MapKey = "B";
@@ -37,18 +36,18 @@ public class SendBug {
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20, 10, 10, 10));
+
     }
 
-
     public void setElements(){
-      //  email.setPrefColumnCount(15);
+       email.setPrefColumnCount(15);
 
         loadBugs.setOnAction((ActionEvent e) -> {
             addTableWithBugs();
-            grid.add(tableView,1,2,20,10);
+            grid.add(tableView,1,2,10,10);
+            loadBugs.setDisable(true);
                 });
     }
-
 
     public GridPane getContent(){
         setGrid();
@@ -58,11 +57,12 @@ public class SendBug {
     }
 
     public void addElementsToGrid(){
-    grid.add(new Label("Your E-Mail:"), 0,0,5,1);
+        grid.add(new Label("Your E-Mail:"), 0,0,5,1);
         grid.add(email, 6,0,6,1);
         grid.add(loadBugs, 13,0,7,1);
-
-
+        grid.add(testLAbel,1,1,10,1);
+        testLAbel.setMinWidth(500);
+        testLAbel.setVisible(true);
     }
 
     public void addTableWithBugs(){
@@ -70,10 +70,17 @@ public class SendBug {
         firstDataColumn.setMinWidth(100);
         secondDataColumn.setCellValueFactory(new MapValueFactory(Column2MapKey));
         secondDataColumn.setMinWidth(570);
-        tableView.setPrefHeight(800);
 
-        tableView.setEditable(true);
+        tableView.setPrefHeight(800);
+        tableView.setEditable(false);
         tableView.getSelectionModel().setCellSelectionEnabled(true);
+        tableView.setOnMouseClicked((MouseEvent e) -> {
+            String bugName = ((Map<String, String>)tableView.getSelectionModel().getSelectedItem()).get("A");
+            String bugSummary = ((Map<String, String>)tableView.getSelectionModel().getSelectedItem()).get("B");
+            testLAbel.setText("You selected " + bugName + ": " + bugSummary);
+        });
+
+
         tableView.getColumns().setAll(firstDataColumn, secondDataColumn);
         Callback<TableColumn<Map, String>, TableCell<Map, String>>
                 cellFactoryForMap = (TableColumn<Map, String> p) ->

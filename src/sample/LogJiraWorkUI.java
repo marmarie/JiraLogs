@@ -46,7 +46,7 @@ import java.util.logging.Logger;
 
         primaryStage.setTitle("Tabs");
         Group root = new Group();
-        Scene scene = new Scene(root, 700, 700, Color.WHITE);
+        Scene scene = new Scene(root, 900, 900, Color.WHITE);
 
         TabPane tabPane = new TabPane();
 

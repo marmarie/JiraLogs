@@ -4,12 +4,15 @@ package sample.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.http.HttpRequest;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 import sample.LoginPage3;
@@ -26,6 +29,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -141,7 +145,7 @@ public class TestHttp  {
 
     private static String getBugsJson() {
         String json = "";
-        putCredentials("");
+        putCredentials("bWFyaXlhLmF6b3lhbjpKdWx5ITAxMDY=");
         try {
             json = post(headersMap, "https://jira.ringcentral.com/rest/api/2/search?jql=issuetype%20%3D%20Bug%20and%20created%20%3E%20startOfDay(-0d)%20&fields=key,summary");
         } catch (IOException e){
@@ -160,6 +164,34 @@ public class TestHttp  {
             allList.put(key, bugSummaries.get(i++));
         }
         return allList;
+    }
+
+    public static String getEmailSignature() throws IOException{
+        HashMap<String, String> headers = new LinkedHashMap<>();
+        headers.put("Content-Type", "application/x-www-form-urlencoded");
+        headers.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+        ArrayList<BasicNameValuePair> userName = new ArrayList<>();
+        userName.add(new BasicNameValuePair("ln", LoginPage3.getUserPreferences().getUserName()));
+        StringBuilder sb = new StringBuilder();
+        try( CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpPost request = new HttpPost("http://signature.od.ab-soft.net");
+            putHeadersInRequest(request, headers);
+            request.setEntity(new UrlEncodedFormEntity(userName));
+            try (CloseableHttpResponse response = client.execute(request)){
+                try {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()), 65728);
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                    }
+                } catch (Exception e) {
+                    Logger.getAnonymousLogger().log(Level.INFO, e.getMessage());
+                }
+            }
+        }
+        String signature = sb.toString().split("Save this code as your mail signature...\" readonly>")[1].split("</textarea><br>")[0];
+
+        return signature;
     }
 
 
@@ -232,7 +264,11 @@ public class TestHttp  {
 
 
  public static void main(String...args){
-
+     try {
+         getEmailSignature();
+     } catch (IOException e) {
+         e.printStackTrace();
+     }
  }
 
 

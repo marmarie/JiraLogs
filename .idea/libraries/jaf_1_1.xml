@@ -17,6 +17,14 @@
       <root url="file://$USER_HOME$/Downloads/javamail-1.4.7/demo/servlet" />
       <root url="file://$USER_HOME$/Downloads/javamail-1.4.7/demo/webapp/src/classes" />
       <root url="file://$USER_HOME$/Downloads/javamail-1.4.7/demo/webapp/src/taglib" />
+      <root url="file://$USER_HOME$/Downloads/jaf-1.1.1/demo" />
+      <root url="file://$USER_HOME$/Downloads/javamail-1.4.7/demo" />
+      <root url="file://$USER_HOME$/Downloads/javamail-1.4.7/demo/client" />
+      <root url="file://$USER_HOME$/Downloads/javamail-1.4.7/demo/logging" />
+      <root url="file://$USER_HOME$/Downloads/javamail-1.4.7/demo/outlook" />
+      <root url="file://$USER_HOME$/Downloads/javamail-1.4.7/demo/servlet" />
+      <root url="file://$USER_HOME$/Downloads/javamail-1.4.7/demo/webapp/src/classes" />
+      <root url="file://$USER_HOME$/Downloads/javamail-1.4.7/demo/webapp/src/taglib" />
     </SOURCES>
     <jarDirectory url="file://$USER_HOME$/Downloads/jaf-1.1.1" recursive="false" />
     <jarDirectory url="file://$USER_HOME$/Downloads/javamail-1.4.7" recursive="false" />

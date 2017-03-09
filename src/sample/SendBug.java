@@ -11,6 +11,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import sample.utils.EmailSender;
 import sample.utils.TestHttp;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,10 +25,11 @@ public class SendBug {
     Button loadBugs = new Button("Load bugs");
     Button sendBugs = new Button("Send Bugs");
     Label testLAbel = new Label("BugList");
-    TextField email = new TextField(LoginPage3.userPreferences.getUserName() + "@ab-soft.net");
+    TextField email = new TextField(LoginPage3.getUserPreferences().getUserName() + "@ab-soft.net");
     public static final String Column1MapKey = "A";
     public static final String Column2MapKey = "B";
-
+    String bugName;
+    String bugSummary;
     TableColumn<Map, String> firstDataColumn = new TableColumn<>("Bug");
     TableColumn<Map, String> secondDataColumn = new TableColumn<>("Summary");
     TableView tableView = new TableView<>(generateDataInMap());
@@ -47,6 +49,13 @@ public class SendBug {
             grid.add(tableView,1,2,10,10);
             loadBugs.setDisable(true);
                 });
+
+        sendBugs.setOnAction((ActionEvent e) ->{
+          if (new EmailSender().sendEMmail(bugName, bugSummary))
+              sendBugs.setText("Sent!");
+          else sendBugs.setText("Fail :(");
+            sendBugs.setDisable(true);
+        });
     }
 
     public GridPane getContent(){
@@ -61,8 +70,11 @@ public class SendBug {
         grid.add(email, 6,0,6,1);
         grid.add(loadBugs, 13,0,7,1);
         grid.add(testLAbel,1,1,10,1);
+        grid.add(sendBugs,13,1,1,1);
         testLAbel.setMinWidth(500);
         testLAbel.setVisible(true);
+        sendBugs.setVisible(false);
+        LoginPage3.getUserPreferences().setEmail(email.getText());
     }
 
     public void addTableWithBugs(){
@@ -75,11 +87,13 @@ public class SendBug {
         tableView.setEditable(false);
         tableView.getSelectionModel().setCellSelectionEnabled(true);
         tableView.setOnMouseClicked((MouseEvent e) -> {
-            String bugName = ((Map<String, String>)tableView.getSelectionModel().getSelectedItem()).get("A");
-            String bugSummary = ((Map<String, String>)tableView.getSelectionModel().getSelectedItem()).get("B");
-            testLAbel.setText("You selected " + bugName + ": " + bugSummary);
+            bugName = ((Map<String, String>)tableView.getSelectionModel().getSelectedItem()).get("A");
+            bugSummary = ((Map<String, String>)tableView.getSelectionModel().getSelectedItem()).get("B");
+            testLAbel.setText(bugName + ": " + bugSummary);
+            sendBugs.setText("Send Bugs");
+            sendBugs.setDisable(false);
+            sendBugs.setVisible(true);
         });
-
 
         tableView.getColumns().setAll(firstDataColumn, secondDataColumn);
         Callback<TableColumn<Map, String>, TableCell<Map, String>>

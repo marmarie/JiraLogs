@@ -17,13 +17,13 @@ public class SendEmail {
 
     public static void main(String[] args) {
 
-        final String username = " ";
-        final String password = " ";
+        final String username = "";
+        final String password = "";
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.me.com");
+        props.put("mail.smtp.host", "secure.emailsrvr.com");
         props.put("mail.smtp.port", "587");
 
         Session session = Session.getInstance(props,
@@ -34,10 +34,10 @@ public class SendEmail {
                 });
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(username));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(" "));
-            message.setSubject("New Bug");
-            message.setContent("<a href=\"https://www.tutorialspoint.com/java/java_sending_email.htm\">Текст ссылки</a>", "text/html");
+            message.setFrom(new InternetAddress("from"));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("to"));
+            message.setSubject("Test");
+            message.setContent("", "text/html");
 //            message.setText("Dear Mail Crawler,"
 //                    + "\n\n No spam to my email, please!");
             Transport.send(message);

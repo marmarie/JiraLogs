@@ -4,21 +4,40 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import structure.model.UserPreferences;
 
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by marie on 23.11.16.
  */
 public class FileReader {
 
-
     public static boolean isFileExists(){
         return getFile().exists();
     }
-
     private static File getFile(){
         return new File("login.txt");
     }
 
+    public static boolean isSignatureExist(){return getSignature().exists();}
+    private static File getSignature() {return new File("signature.txt");}
+
+    public static String getEmailSignature() throws IOException {
+        if(!isSignatureExist())
+            saveEmailSignature();
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(getSignature(), String.class);
+    }
+
+    public static void saveEmailSignature() throws IOException {
+        File signatureFile = getSignature();
+        if(signatureFile.createNewFile()) {
+            Logger.getAnonymousLogger().log(Level.FINE, "New Signature File was created!");
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.writeValue(signatureFile, TestHttp.getEmailSignature());
+        }
+        else Logger.getAnonymousLogger().log(Level.FINE, "Signature File already exists!");
+    }
 
     public static String[] getCredentials() throws IOException {
         java.io.FileReader fileReader = new java.io.FileReader(getFile());

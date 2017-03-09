@@ -27,12 +27,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -52,8 +50,8 @@ public class TestHttp  {
     headersMap.put("Content-Type", "application/json");
    }
 
-    public static void putCredentials(String credentials) {
-        headersMap.put("Authorization", "Basic " + credentials);
+    public static void putCredentials() {
+        headersMap.put("Authorization", "Basic " + LoginPage3.getUserPreferences().getCredentials());
     }
 
     public static void putHeadersInRequest(HttpRequest request, HashMap<String, String> headers) {
@@ -64,6 +62,7 @@ public class TestHttp  {
 
     public static JSONObject makeJSON(String date, String time) throws JSONException {
         JSONObject f = new JSONObject();
+        if(!date.equals(""))
         f.put("started", date);
         if(time.contains("s"))
             f.put("timeSpentSeconds", time.replace("s",""));
@@ -85,8 +84,8 @@ public class TestHttp  {
         return false;
     }
 
-    public static void logWork(String credentials, JiraIssue jiraIssue) throws JSONException, IOException {
-        putCredentials(credentials);
+    public static void logWork(JiraIssue jiraIssue) throws JSONException, IOException {
+        putCredentials();
         for(String dateIssue : jiraIssue.getWorkLogs().keySet()) {
             String time = jiraIssue.getWorkLogs().get(dateIssue);
             System.out.println("log to "+jiraIssue.getId()+" date = " +dateIssue +" time to log="+ time);
@@ -94,11 +93,24 @@ public class TestHttp  {
         }
     }
 
+    public static List<String> log8hToTodayTasks() throws JSONException, IOException {
+        putCredentials();
+        List<String> taskIds =  read(getTasksJSON(), "$.issues[*].key");
+        String timeInSeconds = String.valueOf(28800/taskIds.size());
+        String timeInHours = String.valueOf(8/taskIds.size());
+        for(String id : taskIds ) {
+        Logger.getAnonymousLogger().log(Level.FINE, "log to " + id + " time to log = " + timeInHours + " hours");
+        makePost(headersMap, "https://jira.ringcentral.com/rest/api/latest/issue/" + id + "/worklog", makeJSON(LocalDateTime.now().toString() + "+0000", timeInSeconds+"s"));
+     }
+      //  makePost(headersMap, "https://jira.ringcentral.com/rest/api/latest/issue/AUT-10223/worklog", makeJSON(LocalDateTime.now().toString() + "+0000", "102s"));
+        return taskIds;
+    }
+
 
 
     public static HashMap<String, String> getLogWork(String credentials, int days) throws IOException {
         HashMap<String, String> hashMap = new HashMap<>();
-        String json = getJson(credentials,days);
+        String json = getJson(days);
 
         Worklog[] w = new ObjectMapper().readValue(json, Result.class).getWorklog();
         for (Worklog worklog : w) {
@@ -118,7 +130,7 @@ public class TestHttp  {
     public static HashMap<String, String> getLogWork(String credentials, LocalDate startDate, LocalDate endDate) throws IOException {
         HashMap<String, String> hashMap = new HashMap<>();
         int days = (int) ChronoUnit.DAYS.between(startDate, LocalDate.now());
-        String json = getJson(credentials, days);
+        String json = getJson(days);
 
         Worklog[] w = new ObjectMapper().readValue(json, Result.class).getWorklog();
         for (Worklog worklog : w) {
@@ -137,16 +149,28 @@ public class TestHttp  {
         return hashMap;
     }
 
-    private static String getJson(String credentials,int days) throws IOException {
-        putCredentials(credentials);
-        String json = post(headersMap, "https://jira.ringcentral.com/rest/timesheet-gadget/1.0/raw-timesheet.json?targetUser=" + getUserName(credentials) + "&startDate=" + getDate(days));
+    private static String getJson(int days) throws IOException {
+        putCredentials();
+        String json = post(headersMap, "https://jira.ringcentral.com/rest/timesheet-gadget/1.0/raw-timesheet.json?targetUser=" + getUserName(LoginPage3.getUserPreferences().getCredentials()) + "&startDate=" + getDate(days));
+        return json;
+    }
+
+    private static String getTasksJSON(){
+        String json = "";
+        try {
+            putCredentials();
+            json = post(headersMap, "https://jira.ringcentral.com/rest/api/2/search?jql=issuetype%20in%20('Dashboard%20report%20message',%20'QA%20Auto%20Sub-Task')%20AND%20assignee%20in%20("+FileReader.getCredentialsFromFile().getUserName()+")%20AND%20%20updatedDate%20%3E%20startOfDay(-0d)");
+        }
+        catch (IOException e){
+            Logger.getAnonymousLogger().log(Level.WARNING, "Problem with getting TasksJSON");
+        }
         return json;
     }
 
     private static String getBugsJson() {
         String json = "";
-        putCredentials("bWFyaXlhLmF6b3lhbjpKdWx5ITAxMDY=");
         try {
+            putCredentials();
             json = post(headersMap, "https://jira.ringcentral.com/rest/api/2/search?jql=issuetype%20%3D%20Bug%20and%20created%20%3E%20startOfDay(-0d)%20&fields=key,summary");
         } catch (IOException e){
             Logger.getAnonymousLogger().log(Level.WARNING, e.getMessage());
@@ -196,7 +220,7 @@ public class TestHttp  {
 
 
     public static int basicAuthorization(UserPreferences userPreferences) throws IOException {
-        putCredentials(userPreferences.getCredentials());
+        putCredentials();
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             HttpGet request = new HttpGet("http://jira.ringcentral.com");
             putHeadersInRequest(request, headersMap);
@@ -218,8 +242,7 @@ public class TestHttp  {
             putHeadersInRequest(request, headers);
             try (CloseableHttpResponse response = client.execute(request)) {
                 try {
-                    BufferedReader reader =
-                            new BufferedReader(new InputStreamReader(response.getEntity().getContent()), 65728);
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()), 65728);
                     String line;
                     while ((line = reader.readLine()) != null) {
                         sb.append(line);
@@ -265,9 +288,9 @@ public class TestHttp  {
 
  public static void main(String...args){
      try {
-         getEmailSignature();
-     } catch (IOException e) {
-         e.printStackTrace();
+         log8hToTodayTasks();
+     } catch (IOException  | JSONException ex) {
+         Logger.getAnonymousLogger().log(Level.WARNING, "Something went wrong");
      }
  }
 

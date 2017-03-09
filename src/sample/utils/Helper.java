@@ -5,6 +5,7 @@ import structure.JiraIssue;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -21,12 +22,9 @@ public class Helper {
     static  {
         daysOff.add("sunday");
         daysOff.add("saturday");
-
-
     }
 
     static SimpleDateFormat format = new SimpleDateFormat(DATE);
-
 
     public static String getUserName(String cred) {
         byte[] decodedBytes = Base64.decodeBase64(cred);
@@ -44,7 +42,7 @@ public class Helper {
 
     public static JiraIssue getIssue(String id, String time ){
         LinkedHashMap<String, String> workLogs = new LinkedHashMap<>();
-        workLogs.put(getDate(String.valueOf(new Date().getTime())), getTimeInSeconds(time));
+        workLogs.put(LocalDateTime.now().toString(), getTimeInSeconds(time));
         return new JiraIssue(id, workLogs);
     }
 
@@ -56,7 +54,6 @@ public class Helper {
         if(time.contains("m"))
             return Integer.parseInt(time.replace("m", "")) * 60 + "";
         return time;
-
     }
 
 

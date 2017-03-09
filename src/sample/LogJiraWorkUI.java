@@ -65,7 +65,6 @@ import java.util.logging.Logger;
         logAuto.setContent(new LogTodayAuto().getContent());
         sendBug.setContent(new SendBug().getContent());
         tabPane.getTabs().addAll(tabS,tabD,logAuto, sendBug);
-
         tabPane.setSide(Side.LEFT);
         tabPane.setTabMinWidth(30);
         tabPane.setTabMinHeight(70);

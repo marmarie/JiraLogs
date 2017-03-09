@@ -113,7 +113,7 @@ public class LogTodayAuto {
                                             stringProperty.set("Log!");
                                             CompletableFuture.supplyAsync(() -> {
                                             try {
-                                                TestHttp.logWork(LoginPage3.getUserPreferences().getCredentials(), Helper.getIssue(taskName.getText(),"8h"));
+                                                TestHttp.logWork(Helper.getIssue(taskName.getText(),"8h"));
                                             } catch (JSONException e) {
                                                 Logger.getAnonymousLogger().log(Level.INFO, e.getMessage());
                                             } catch (IOException e) {

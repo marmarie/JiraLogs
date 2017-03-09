@@ -9,6 +9,7 @@ import javafx.scene.layout.GridPane;
 import sample.utils.Helper;
 import sample.utils.TestHttp;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -24,7 +25,6 @@ public class LogDaysContent {
             }
         }
     };
-
 
     TextField taskTime = new TextField(){
         @Override
@@ -42,8 +42,10 @@ public class LogDaysContent {
         }
     };
     Button logWork = new Button("Log Work");
+    Button logTodayTasks = new Button("Do it!");
+    Label logTasks = new Label("Or you can log all tasks you've been working on today");
     GridPane grid= new GridPane();
-
+    int i = 5;
 
     public void logTime(){
         logWork.setOnAction((ActionEvent event) -> {
@@ -51,22 +53,44 @@ public class LogDaysContent {
             String taskN = taskName.getText();
             String taskT = taskTime.getText();
 
-            logWork.setDisable(true);
-            taskName.setDisable(true);
-            taskTime.setDisable(true);
+            disableAllButtonsOnUI(true);
             CompletableFuture.supplyAsync(() -> {
                 try {
-                    TestHttp.logWork(LoginPage3.getUserPreferences().getCredentials(), Helper.getIssue(taskN, taskT));
+                    TestHttp.logWork(Helper.getIssue(taskN, taskT));
                     grid.add(new Label("Logged " + taskTime.getText() + " to " + taskName.getText()), 1, 3);
                 } catch (Exception e) {
                     grid.add(new Label(e.getCause().toString()), 1, 3);
                 }
                 return 0;
             });
-            logWork.setDisable(false);
-            taskName.setDisable(false);
-            taskTime.setDisable(false);
+            disableAllButtonsOnUI(false);
         });
+    }
+
+    public void logTasks(){
+        logTodayTasks.setOnAction((ActionEvent event) -> {
+            disableAllButtonsOnUI(true);
+
+            CompletableFuture.supplyAsync(() -> {
+                try {
+                    List<String> tasks = TestHttp.log8hToTodayTasks();
+                    for (String id: tasks) {
+                        grid.add(new Label("Logged " + String.valueOf(8/tasks.size()) + "hours to " + id), 1, i++);
+                    }
+                } catch (Exception e) {
+                    grid.add(new Label(e.getCause().toString()), 1, i);
+                }
+                return 0;
+            });
+            disableAllButtonsOnUI(false);
+        });
+    }
+
+    public void disableAllButtonsOnUI(boolean value){
+        logWork.setDisable(value);
+        taskName.setDisable(value);
+        taskTime.setDisable(value);
+        logTodayTasks.setDisable(value);
     }
 
     public void setGrid(){
@@ -81,6 +105,9 @@ public class LogDaysContent {
         grid.add(new Label("Time:  "), 0, 1);
         grid.add(taskTime, 1, 1);
         grid.add(logWork, 1, 2);
+        grid.add(logTasks,1,4);
+        logTasks.setMinWidth(100);
+        grid.add(logTodayTasks,4,4);
     }
 
     private boolean isCorrectSymbol(String symbol){
@@ -104,6 +131,7 @@ public class LogDaysContent {
         taskTime.setPromptText("e.g. 1d 1h 1m");
         enableLogWork();
         logTime();
+        logTasks();
         addElementsToGrid();
        return grid;
     }

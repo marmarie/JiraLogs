@@ -18,7 +18,7 @@ public class JiraBasicRest {
         int days = 5;
         HashMap<String,String> dateAndLogTime = TestHttp.getLogWork(cred,days);
         JiraIssue issueToLog = TestHttp.getIssueListForLog(basicIssue,dateAndLogTime,days);
-        TestHttp.logWork(cred,issueToLog);
+        TestHttp.logWork(issueToLog);
 
 
     }

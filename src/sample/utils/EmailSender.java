@@ -28,11 +28,7 @@ public class EmailSender {
     public EmailSender(){
         this.username = LoginPage3.getUserPreferences().getUserName() + "@od.anything3d.com";
         this.email = LoginPage3.getUserPreferences().getEmail();
-        try {
-            this.signature = FileReader.getEmailSignature();
-        } catch (IOException e) {
-            Logger.getAnonymousLogger().log(Level.WARNING, "Problems with email signature");
-        }
+        this.signature = FileReader.getEmailSignature();
     }
 
     private Session getSession(){

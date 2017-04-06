@@ -100,14 +100,10 @@ public class LoginPage3 extends Application {
 
                 CompletableFuture.supplyAsync(() -> {
                     Logger.getAnonymousLogger().log(Level.INFO, "supplyAsync");
-                    try {
                         result = basicAuthorization(userPreferences);
                         Logger.getAnonymousLogger().log(Level.INFO, "basic Authorization");
                         progressIndicator.setVisible(false);
 
-                    } catch (IOException e) {
-                        Logger.getAnonymousLogger().log(Level.INFO, e.getMessage());
-                    }
                     Platform.runLater(() -> {
                         if (result == 200) {
                             if (saveCredentials.isSelected()){

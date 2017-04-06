@@ -91,16 +91,9 @@ public class LoginPage2 extends Application {
 
             Thread thread1 = new Thread(() -> {
                 progressIndicator.setVisible(true);
-                int code = 0;
-                try {
-                    code = basicAuthorization(userPreferences);
-                } catch (IOException e) {
-                    Logger.getAnonymousLogger().log(Level.INFO, e.getMessage());
-                }
-
-                int finalCode = code;
+                int code = basicAuthorization(userPreferences);
                 Platform.runLater(() -> {
-                    if (finalCode == 200) {
+                    if (code == 200) {
                         if (saveCredentials.isSelected()){
                             try {
                                 FileReader.saveUserPreferences(userPreferences);
@@ -115,7 +108,7 @@ public class LoginPage2 extends Application {
                             e.printStackTrace();
                         }
                     } else{
-                        new Alert(Alert.AlertType.INFORMATION, "Code " + String.valueOf(finalCode)).show();
+                        new Alert(Alert.AlertType.INFORMATION, "Code " + String.valueOf(code)).show();
                     }
                 });
 

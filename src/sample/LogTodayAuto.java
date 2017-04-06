@@ -112,14 +112,8 @@ public class LogTodayAuto {
                                             t = Duration.valueOf(86400+"s");
                                             stringProperty.set("Log!");
                                             CompletableFuture.supplyAsync(() -> {
-                                            try {
                                                 TestHttp.logWork(Helper.getIssue(taskName.getText(),"8h"));
-                                            } catch (JSONException e) {
-                                                Logger.getAnonymousLogger().log(Level.INFO, e.getMessage());
-                                            } catch (IOException e) {
-                                                Logger.getAnonymousLogger().log(Level.INFO, e.getMessage());
-                                            }
-                                            return 0;
+                                                return 0;
                                         });
                                         }
                                         else {

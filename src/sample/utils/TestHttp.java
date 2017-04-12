@@ -51,7 +51,8 @@ public class TestHttp  {
    }
 
     public static void putCredentials() {
-        headersMap.put("Authorization", "Basic " + LoginPage3.getUserPreferences().getCredentials());
+       // headersMap.put("Authorization", "Basic " + LoginPage3.getUserPreferences().getCredentials());
+        headersMap.put("Authorization", "Basic " + FileReader.getCredentialsFromFile().getCredentials());
     }
 
     public static void putHeadersInRequest(HttpRequest request, HashMap<String, String> headers) {
@@ -176,7 +177,8 @@ public class TestHttp  {
 
     private static String getTasksJSON(){
         putCredentials();
-        return post(headersMap, "https://jira.ringcentral.com/rest/api/2/search?jql=issuetype%20in%20('Dashboard%20report%20message',%20'QA%20Auto%20Sub-Task')%20AND%20assignee%20in%20("+FileReader.getCredentialsFromFile().getUserName()+")%20AND%20%20updatedDate%20%3E%20startOfDay(-0d)");
+        //https://jira.ringcentral.com/rest/api/2/search?jql=issuetype%20in(%27Dashboard%20report%20message%27,%20%27QA%20Auto%20Sub-Task%27,%20%27QA%20Task%27)%20and%20assignee%20in(%27mariya.azoyan%27)%20AND%20%20updatedDate%20%3E%20startOfDay(-0d)
+        return post(headersMap, "https://jira.ringcentral.com/rest/api/2/search?jql=issuetype%20in%20('Dashboard%20report%20message',%20'QA%20Auto%20Sub-Task',%20'QA%20Task')%20AND%20assignee%20in%20("+FileReader.getCredentialsFromFile().getUserName()+")%20AND%20%20updatedDate%20%3E%20startOfDay(-0d)");
     }
 
     private static String getBugsJson() {
@@ -297,7 +299,7 @@ public class TestHttp  {
 
 
  public static void main(String...args){
-         log8hToTodayTasks();
+         getIssuesForToday();
  }
 
 

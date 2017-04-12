@@ -3,6 +3,7 @@ package sample;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -16,6 +17,9 @@ import java.util.concurrent.CompletableFuture;
  * Created by marie on 08.12.16.
  */
 public class LogDaysContent {
+
+    ComboBox<String> taskNames = new ComboBox<>();
+
 
     TextField taskName = new TextField(){
         @Override
@@ -101,7 +105,7 @@ public class LogDaysContent {
 
     public void addElementsToGrid(){
         grid.add(new Label("Task id: "), 0, 0);
-        grid.add(taskName, 1, 0);
+        grid.add(taskNames, 1, 0);
         grid.add(new Label("Time:  "), 0, 1);
         grid.add(taskTime, 1, 1);
         grid.add(logWork, 1, 2);
@@ -127,7 +131,7 @@ public class LogDaysContent {
     public GridPane getContent(){
         setGrid();
         logWork.setDisable(true);
-        taskName.setPromptText("AUT-999");
+        setTaskNames();
         taskTime.setPromptText("e.g. 1d 1h 1m");
         enableLogWork();
         logTime();
@@ -136,17 +140,22 @@ public class LogDaysContent {
        return grid;
     }
 
+    private void setTaskNames(){
+       taskNames.getItems().addAll(TestHttp.getIssuesForToday());
+       taskNames.setEditable(true);
+    }
+
     private void enableLogWork(){
-        taskName.setOnKeyTyped(event -> {
+        taskNames.setOnKeyTyped(event -> {
             String newText = event.getCharacter();
-            if(Helper.isCorrectTaskId(taskName.getText()+newText)&&!taskTime.getText().isEmpty())
+            if(Helper.isCorrectTaskId(taskNames.getValue()+newText)&&!taskTime.getText().isEmpty())
                 logWork.setDisable(false);
             else
                 logWork.setDisable(true);
         });
 
         taskTime.setOnKeyTyped(event -> {
-            if(Helper.isCorrectTaskId(taskName.getText())&&!taskTime.getText().isEmpty())
+            if(Helper.isCorrectTaskId(taskNames.getValue())&&!taskTime.getText().isEmpty())
                 logWork.setDisable(false);
             else
                 logWork.setDisable(true);

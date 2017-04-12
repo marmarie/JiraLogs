@@ -38,6 +38,7 @@ public class LogDaysContent {
                 super.replaceText(start, end, text);
                 if(text.matches("[h|m|d]")&&all.replaceAll("[h|m|d]","").length()>0){
                     String time = Helper.getTimeInSeconds(all);
+
                     if(Integer.parseInt(time)>28800){
                         taskTime.setText("1d");
                     }
@@ -54,14 +55,14 @@ public class LogDaysContent {
     public void logTime(){
         logWork.setOnAction((ActionEvent event) -> {
 
-            String taskN = taskName.getText();
+            String taskN = taskNames.getValue();
             String taskT = taskTime.getText();
 
             disableAllButtonsOnUI(true);
             CompletableFuture.supplyAsync(() -> {
                 try {
                     TestHttp.logWork(Helper.getIssue(taskN, taskT));
-                    grid.add(new Label("Logged " + taskTime.getText() + " to " + taskName.getText()), 1, 3);
+                    grid.add(new Label("Logged " + taskTime.getText() + " to " + taskNames.getValue()), 1, 3);
                 } catch (Exception e) {
                     grid.add(new Label(e.getCause().toString()), 1, 3);
                 }
@@ -92,7 +93,7 @@ public class LogDaysContent {
 
     public void disableAllButtonsOnUI(boolean value){
         logWork.setDisable(value);
-        taskName.setDisable(value);
+        taskNames.setDisable(value);
         taskTime.setDisable(value);
         logTodayTasks.setDisable(value);
     }
@@ -115,17 +116,11 @@ public class LogDaysContent {
     }
 
     private boolean isCorrectSymbol(String symbol){
-        if(symbol.matches("[0-9]")||symbol.matches("[h|m|d]"))
-            return true;
-        else
-            return false;
+        return symbol.matches("[0-9]") || symbol.matches("[h|m|d]");
     }
 
     private boolean isCorrectAllText(String all){
-        if((all.matches("^\\d{1,3}|^\\d{1,5}+."))&&all.replaceAll("[0-9]","").length()<=1)
-            return true;
-        else
-            return false;
+        return (all.matches("^\\d{1,3}|^\\d{1,5}+.")) && all.replaceAll("[0-9]", "").length() <= 1;
     }
 
     public GridPane getContent(){
@@ -143,10 +138,13 @@ public class LogDaysContent {
     private void setTaskNames(){
        taskNames.getItems().addAll(TestHttp.getIssuesForToday());
        taskNames.setEditable(true);
+       taskNames.getEditor().textProperty().addListener( l ->{
+
+       });
     }
 
     private void enableLogWork(){
-        taskNames.setOnKeyTyped(event -> {
+        taskNames.getEditor().setOnKeyTyped(event -> {
             String newText = event.getCharacter();
             if(Helper.isCorrectTaskId(taskNames.getValue()+newText)&&!taskTime.getText().isEmpty())
                 logWork.setDisable(false);

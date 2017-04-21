@@ -14,7 +14,6 @@ public class JiraBasicRest {
     public static final String DATE = "yyyy-MM-dd";
     public static void main(String args []) throws IOException, JSONException {
         String basicIssue = "AUT-10223";
-        String cred = "";
         int days = 5;
         HashMap<String,String> dateAndLogTime = TestHttp.getLogWork(days);
         JiraIssue issueToLog = TestHttp.getIssueListForLog(basicIssue,dateAndLogTime,days);

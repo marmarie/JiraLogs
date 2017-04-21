@@ -7,6 +7,8 @@ import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static java.util.logging.Level.WARNING;
+
 /**
  * Created by marie on 23.11.16.
  */
@@ -19,7 +21,7 @@ public class FileReader {
         return new File("login.txt");
     }
 
-    public static boolean isSignatureExist(){return getSignature().exists();}
+    private static boolean isSignatureExist(){return getSignature().exists();}
     private static File getSignature() {return new File("signature.txt");}
 
     public static String getEmailSignature() {
@@ -29,7 +31,7 @@ public class FileReader {
         try {
             return objectMapper.readValue(getSignature(), String.class);
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getAnonymousLogger().log(WARNING, e.getMessage());
         }
         return null;
     }
@@ -44,7 +46,7 @@ public class FileReader {
             }
             else Logger.getAnonymousLogger().log(Level.FINE, "Signature File already exists!");
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getAnonymousLogger().log(WARNING, e.getMessage());
         }
     }
 
@@ -89,7 +91,7 @@ public class FileReader {
             else
                 System.out.println("File already exists");
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getAnonymousLogger().log(WARNING, e.getMessage());
         }
     }
 
@@ -98,7 +100,7 @@ public class FileReader {
         try {
             return objectMapper.readValue(getFile(), UserPreferences.class);
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getAnonymousLogger().log(WARNING, e.getMessage());
         }
         return null;
     }

@@ -82,7 +82,7 @@ public class LoginPage3 extends Application {
 
         if (FileReader.isFileExists()) {
             userPreferences = getCredentialsFromFile();
-            username.setText(userPreferences.getUserName());
+            username.setText(userPreferences != null ? userPreferences.getUserName() : null);
             password.setText(getPassword(userPreferences.getCredentials()));
             loginButton.setDisable(false);
             saveCredentials.setVisible(false);

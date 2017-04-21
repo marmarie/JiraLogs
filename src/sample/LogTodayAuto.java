@@ -64,17 +64,13 @@ public class LogTodayAuto {
     private void enableCheckBox(){
         taskName.setOnKeyTyped(event -> {
             String newText = event.getCharacter();
-            if(Helper.isCorrectTaskId(taskName.getText()+newText)&&datePicker.getTime()!=null)
-                autoEnable.setDisable(false);
-            else
-                autoEnable.setDisable(true);
+            boolean disable = !(Helper.isCorrectTaskId(taskName.getText() + newText) && datePicker.getTime() != null);
+            autoEnable.setDisable(disable);
         });
 
         datePicker.setOnMouseExited(event -> {
-            if(Helper.isCorrectTaskId(taskName.getText())&&datePicker.getTime()!=null)
-                autoEnable.setDisable(false);
-            else
-                autoEnable.setDisable(true);
+            boolean disable = !(Helper.isCorrectTaskId(taskName.getText())&&datePicker.getTime()!=null);
+            autoEnable.setDisable(disable);
         });
     }
 
@@ -94,12 +90,8 @@ public class LogTodayAuto {
         autoEnable.setOnAction(event->{
             if(autoEnable.isSelected()) {
                 final LocalTime[] autoLogTime = {datePicker.getTime()};
-                if(autoLogTime[0].isBefore(LocalTime.now())) {
-                    t = Duration.valueOf(autoLogTime[0].toSecondOfDay()-LocalTime.now().toSecondOfDay()+86400+"s");
-                }
-                else {
-                    t = Duration.valueOf(autoLogTime[0].toSecondOfDay() - LocalTime.now().toSecondOfDay() + "s");
-                }
+                String timeInSeconds = autoLogTime[0].isBefore(LocalTime.now()) ? "86400" : "";
+                t = Duration.valueOf(autoLogTime[0].toSecondOfDay() - LocalTime.now().toSecondOfDay() + timeInSeconds + "s");
                 taskName.setDisable(true);
                 datePicker.setDisable(true);
                     timeline = new Timeline(

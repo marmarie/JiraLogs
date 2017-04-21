@@ -90,7 +90,6 @@ public class LogMonthContent {
 
     private void logDays(LocalDate localDate,LocalDate localEndDate) throws IOException, JSONException {
         String basicIssue = taskName.getText();
-        String cred = LoginPage3.getUserPreferences().getCredentials();
         long days = ChronoUnit.DAYS.between(localDate, localEndDate);
         System.out.println(days);
 
@@ -104,47 +103,41 @@ public class LogMonthContent {
 
     public void logTime(){
         logWork.setOnAction((ActionEvent event) -> {
-            taskName.setDisable(true);
-            logWork.setDisable(true);
-            checkInDatePicker.setDisable(true);
-            checkInEndDatePicker.setDisable(true);
+            setAllDisable(true);
             CompletableFuture.supplyAsync(() -> {
                         try {
                             logDays(checkInDatePicker.getValue(),checkInEndDatePicker.getValue());
-
                         } catch (Exception e) {
                             grid.add(new Label(e.toString()), 1, 3);
                         }
                         return 0;
                     });
-            logWork.setDisable(false);
-            taskName.setDisable(false);
-            checkInDatePicker.setDisable(false);
-            checkInEndDatePicker.setDisable(false);
+           setAllDisable(false);
         });
+    }
+
+    private void setAllDisable(boolean disable){
+        taskName.setDisable(disable);
+        logWork.setDisable(disable);
+        checkInDatePicker.setDisable(disable);
+        checkInEndDatePicker.setDisable(disable);
     }
 
     private void enableLogWork(){
         taskName.setOnKeyTyped(event -> {
             String newText = event.getCharacter();
-            if(Helper.isCorrectTaskId(taskName.getText()+newText))
-                logWork.setDisable(false);
-            else
-                logWork.setDisable(true);
+            boolean disable = !(Helper.isCorrectTaskId(taskName.getText()+newText));
+            logWork.setDisable(disable);
         });
 
         checkInDatePicker.setOnKeyTyped(event -> {
-            if(Helper.isCorrectTaskId(taskName.getText()))
-                logWork.setDisable(false);
-            else
-                logWork.setDisable(true);
+            boolean disable = !(Helper.isCorrectTaskId(taskName.getText()));
+            logWork.setDisable(disable);
         });
 
         checkInEndDatePicker.setOnKeyTyped(event -> {
-            if(Helper.isCorrectTaskId(taskName.getText()))
-                logWork.setDisable(false);
-            else
-                logWork.setDisable(true);
+            boolean disable = !(Helper.isCorrectTaskId(taskName.getText()));
+            logWork.setDisable(disable);
         });
 
     }

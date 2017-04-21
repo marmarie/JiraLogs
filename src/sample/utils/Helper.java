@@ -113,10 +113,7 @@ public class Helper {
             return true;
         if(value.matches("^[a-zA-Z]{3}-|^[a-zA-Z]{3}-\\d{1,}")&&(t.matches("^\\d{1,}")||t.isEmpty()))
             return true;
-        if(isCorrectTaskId(t))
-            return true;
-        else
-            return false;
+        return isCorrectTaskId(t);
     }
     public static boolean isCorrectInputForTaskId(String oldValue, String newValue){
         if(newValue.isEmpty())

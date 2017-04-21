@@ -16,7 +16,6 @@ import static sample.utils.JiraBasicRest.DATE;
  */
 public class Helper {
 
-
     static ArrayList<String> daysOff = new ArrayList<>();
 
     static  {
@@ -103,10 +102,7 @@ public class Helper {
     }
 
     public static boolean isCorrectTaskId(String allText){
-        if(allText.matches("^[a-zA-Z]{3}-\\d{1,}"))
-            return true;
-        else
-            return false;
+        return allText.matches("^[a-zA-Z]{3}-\\d{1,}");
     }
 
     public static boolean isCorrectInputForTaskId1(String value, String t){

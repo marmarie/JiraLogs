@@ -13,9 +13,7 @@ public class UserPreferences {
 
     public void setEmailSignature(String emailSignature) {this.emailSignature = emailSignature;}
 
-    public String getUserName() {
-        return userName;
-    }
+    public String getUserName() {return userName;}
 
     public String getEmail(){return email; }
 

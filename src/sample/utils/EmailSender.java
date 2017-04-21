@@ -38,13 +38,9 @@ public class EmailSender {
         props.put("mail.smtp.host", "secure.emailsrvr.com");
         props.put("mail.smtp.port", "587");
 
-        Session session = Session.getInstance(props,
-                new javax.mail.Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password);
-                    }
+        return Session.getInstance(props, new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {return new PasswordAuthentication(username, password);}
                 });
-        return session;
     }
 
     public boolean sendEMmail(String subject, String summary) {

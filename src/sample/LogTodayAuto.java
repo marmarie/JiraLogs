@@ -28,16 +28,16 @@ import java.util.logging.Logger;
  */
 public class LogTodayAuto {
     private Timeline timeline;
-    GridPane grid= new GridPane();
-    CheckBox autoEnable = new CheckBox();
-    JFXDatePicker datePicker = new JFXDatePicker();
-    Duration t ;
+    private GridPane grid= new GridPane();
+    private CheckBox autoEnable = new CheckBox();
+    private JFXDatePicker datePicker = new JFXDatePicker();
+    private Duration t ;
 
     private Label timerLabel = new Label();
     private static DateTimeFormatter SHORT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
     private StringProperty stringProperty = new SimpleStringProperty();
 
-    TextField taskName = new TextField(){
+    private TextField taskName = new TextField(){
         @Override
         public void replaceText(int start, int end, String text) {
             if (Helper.isCorrectInputForTaskId1(taskName.getText(),text)) {

@@ -31,7 +31,4 @@ public class UserPreferences {
         this.credentials = credentials;
     }
 
-
-
-
 }

@@ -100,7 +100,7 @@ public class LoginPage3 extends Application {
 
                 CompletableFuture.supplyAsync(() -> {
                     Logger.getAnonymousLogger().log(Level.INFO, "supplyAsync");
-                        result = basicAuthorization(userPreferences);
+                        result = basicAuthorization();
                         Logger.getAnonymousLogger().log(Level.INFO, "basic Authorization");
                         progressIndicator.setVisible(false);
 

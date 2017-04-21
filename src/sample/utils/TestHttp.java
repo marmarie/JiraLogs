@@ -36,6 +36,9 @@ import java.util.logging.Logger;
 
 import static com.jayway.jsonpath.JsonPath.*;
 import static com.jayway.jsonpath.JsonPath.read;
+import static java.util.logging.Level.FINE;
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.WARNING;
 import static sample.utils.Helper.*;
 
 /**
@@ -44,7 +47,7 @@ import static sample.utils.Helper.*;
 
 public class TestHttp  {
 
-    static HashMap<String, String> headersMap = new HashMap<>();
+    private static HashMap<String, String> headersMap = new HashMap<>();
 
     static {
     headersMap.put("Content-Type", "application/json");
@@ -71,7 +74,7 @@ public class TestHttp  {
                 else
                     f.put("timeSpent", time);
             } catch (JSONException e) {
-                e.printStackTrace();
+                Logger.getAnonymousLogger().log(WARNING, e.getMessage());
             }
         return f;
     }
@@ -86,7 +89,7 @@ public class TestHttp  {
                         return true;
                 }
             } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getAnonymousLogger().log(WARNING, e.getMessage());
         }
         return false;
     }
@@ -106,7 +109,7 @@ public class TestHttp  {
         String timeInSeconds = String.valueOf(28800/taskIds.size());
         String timeInHours = String.valueOf(8/taskIds.size());
         for(String id : taskIds ) {
-        Logger.getAnonymousLogger().log(Level.FINE, "log to " + id + " time to log = " + timeInHours + " hours");
+        Logger.getAnonymousLogger().log(FINE, "log to " + id + " time to log = " + timeInHours + " hours");
         makePost(headersMap, "https://jira.ringcentral.com/rest/api/latest/issue/" + id + "/worklog", makeJSON(LocalDateTime.now().toString() + "+0000", timeInSeconds+"s"));
      }
       //  makePost(headersMap, "https://jira.ringcentral.com/rest/api/latest/issue/AUT-10223/worklog", makeJSON(LocalDateTime.now().toString() + "+0000", "102s"));
@@ -119,7 +122,7 @@ public class TestHttp  {
     }
 
 
-    public static HashMap<String, String> getLogWork(String credentials, int days) {
+    public static HashMap<String, String> getLogWork(int days) {
         HashMap<String, String> hashMap = new HashMap<>();
         String json = getJson(days);
 
@@ -127,7 +130,7 @@ public class TestHttp  {
         try {
             w = new ObjectMapper().readValue(json, Result.class).getWorklog();
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getAnonymousLogger().log(WARNING, e.getMessage());
         }
         for (Worklog worklog : w) {
             Entries[] entries = worklog.getEntries();
@@ -143,7 +146,7 @@ public class TestHttp  {
         return hashMap;
     }
 
-    public static HashMap<String, String> getLogWork(String credentials, LocalDate startDate, LocalDate endDate) {
+    public static HashMap<String, String> getLogWork(LocalDate startDate, LocalDate endDate) {
         HashMap<String, String> hashMap = new HashMap<>();
         int days = (int) ChronoUnit.DAYS.between(startDate, LocalDate.now());
         String json = getJson(days);
@@ -152,7 +155,7 @@ public class TestHttp  {
         try {
             w = new ObjectMapper().readValue(json, Result.class).getWorklog();
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getAnonymousLogger().log(WARNING, e.getMessage());
         }
         for (Worklog worklog : w) {
             Entries[] entries = worklog.getEntries();
@@ -198,7 +201,7 @@ public class TestHttp  {
         return allList;
     }
 
-    public static String getEmailSignature() {
+    static String getEmailSignature() {
         HashMap<String, String> headers = new LinkedHashMap<>();
         headers.put("Content-Type", "application/x-www-form-urlencoded");
         headers.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
@@ -217,19 +220,17 @@ public class TestHttp  {
                         sb.append(line);
                     }
                 } catch (Exception e) {
-                    Logger.getAnonymousLogger().log(Level.WARNING, e.getMessage());
+                    Logger.getAnonymousLogger().log(WARNING, e.getMessage());
                 }
             }
         } catch (IOException e) {
-            Logger.getAnonymousLogger().log(Level.WARNING, e.getMessage());
+            Logger.getAnonymousLogger().log(WARNING, e.getMessage());
         }
-        String signature = sb.toString().split("Save this code as your mail signature...\" readonly>")[1].split("</textarea><br>")[0];
-
-        return signature;
+        return sb.toString().split("Save this code as your mail signature...\" readonly>")[1].split("</textarea><br>")[0];
     }
 
 
-    public static int basicAuthorization(UserPreferences userPreferences) {
+    public static int basicAuthorization() {
         putCredentials();
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             HttpGet request = new HttpGet("http://jira.ringcentral.com");
@@ -239,7 +240,7 @@ public class TestHttp  {
             }
         }
         catch (Exception ex) {
-            Logger.getAnonymousLogger().log(Level.INFO, ex.getMessage());
+            Logger.getAnonymousLogger().log(WARNING, ex.getMessage());
         }
         return 0;
     }
@@ -258,11 +259,11 @@ public class TestHttp  {
                         sb.append(line);
                     }
                 } catch (Exception e) {
-                    Logger.getAnonymousLogger().log(Level.WARNING, e.getMessage());
+                    Logger.getAnonymousLogger().log(WARNING, e.getMessage());
                 }
             }
         } catch (IOException e) {
-            Logger.getAnonymousLogger().log(Level.WARNING, e.getMessage());
+            Logger.getAnonymousLogger().log(WARNING, e.getMessage());
         }
         return sb.toString();
     }

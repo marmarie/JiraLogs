@@ -95,7 +95,7 @@ public class LogMonthContent {
         System.out.println(days);
 
 
-        HashMap<String,String> dateAndLogTime = TestHttp.getLogWork(cred,localDate,localEndDate);
+        HashMap<String,String> dateAndLogTime = TestHttp.getLogWork(localDate,localEndDate);
         System.out.println(dateAndLogTime.toString());
         JiraIssue issueToLog = TestHttp.getIssueListForLog(basicIssue,dateAndLogTime,localDate,localEndDate );
         System.out.println(issueToLog.getWorkLogs());

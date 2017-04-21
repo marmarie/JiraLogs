@@ -91,7 +91,7 @@ public class LoginPage2 extends Application {
 
             Thread thread1 = new Thread(() -> {
                 progressIndicator.setVisible(true);
-                int code = basicAuthorization(userPreferences);
+                int code = basicAuthorization();
                 Platform.runLater(() -> {
                     if (code == 200) {
                         if (saveCredentials.isSelected()){

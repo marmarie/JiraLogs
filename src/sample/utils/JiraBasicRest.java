@@ -16,7 +16,7 @@ public class JiraBasicRest {
         String basicIssue = "AUT-10223";
         String cred = "";
         int days = 5;
-        HashMap<String,String> dateAndLogTime = TestHttp.getLogWork(cred,days);
+        HashMap<String,String> dateAndLogTime = TestHttp.getLogWork(days);
         JiraIssue issueToLog = TestHttp.getIssueListForLog(basicIssue,dateAndLogTime,days);
         TestHttp.logWork(issueToLog);
 

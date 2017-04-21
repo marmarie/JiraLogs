@@ -1,5 +1,7 @@
 package sample;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -21,14 +23,14 @@ public class LogDaysContent {
     ComboBox<String> taskNames = new ComboBox<>();
 
 
-    TextField taskName = new TextField(){
-        @Override
-        public void replaceText(int start, int end, String text) {
-            if (Helper.isCorrectInputForTaskId(taskName.getText(),text)) {
-                super.replaceText(start, end, text);
-            }
-        }
-    };
+//    TextField taskName = new TextField(){
+//        @Override
+//        public void replaceText(int start, int end, String text) {
+//            if (Helper.isCorrectInputForTaskId(taskName.getText(),text)) {
+//                super.replaceText(start, end, text);
+//            }
+//        }
+//    };
 
     TextField taskTime = new TextField(){
         @Override
@@ -138,8 +140,8 @@ public class LogDaysContent {
     private void setTaskNames(){
        taskNames.getItems().addAll(TestHttp.getIssuesForToday());
        taskNames.setEditable(true);
-       taskNames.getEditor().textProperty().addListener( l ->{
-
+       taskNames.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+           if (!Helper.isCorrectInputForTaskId(oldValue, newValue)) {taskNames.getEditor().deleteNextChar();}
        });
     }
 
@@ -151,6 +153,7 @@ public class LogDaysContent {
             else
                 logWork.setDisable(true);
         });
+
 
         taskTime.setOnKeyTyped(event -> {
             if(Helper.isCorrectTaskId(taskNames.getValue())&&!taskTime.getText().isEmpty())

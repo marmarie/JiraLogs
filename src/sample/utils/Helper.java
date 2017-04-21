@@ -109,7 +109,7 @@ public class Helper {
             return false;
     }
 
-    public static boolean isCorrectInputForTaskId(String value, String t){
+    public static boolean isCorrectInputForTaskId1(String value, String t){
         String allText = value+t;
         if(allText.matches("^[a-zA-Z]{1,3}"))
             return true;
@@ -121,6 +121,18 @@ public class Helper {
             return true;
         else
             return false;
+    }
+    public static boolean isCorrectInputForTaskId(String oldValue, String newValue){
+        if(newValue.isEmpty())
+            return true;
+        String t = String.valueOf(newValue.charAt(newValue.length()-1));
+        if(newValue.matches("^[a-zA-Z]{1,3}"))
+            return true;
+        if(oldValue.matches("^[a-zA-Z]{3}")&&(t.equals("-")||t.isEmpty()))
+            return true;
+        if(oldValue.matches("^[a-zA-Z]{3}-|^[a-zA-Z]{3}-\\d{1,}")&&(t.matches("^\\d{1,}")||t.isEmpty()))
+            return true;
+        return isCorrectTaskId(t);
     }
 
 

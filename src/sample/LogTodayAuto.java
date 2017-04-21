@@ -40,7 +40,7 @@ public class LogTodayAuto {
     TextField taskName = new TextField(){
         @Override
         public void replaceText(int start, int end, String text) {
-            if (Helper.isCorrectInputForTaskId(taskName.getText(),text)) {
+            if (Helper.isCorrectInputForTaskId1(taskName.getText(),text)) {
                 super.replaceText(start, end, text);
             }
         }

@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import sample.utils.FileReader;
 import structure.model.UserPreferences;
 
@@ -63,10 +64,7 @@ public class LoginPage2 extends Application {
 
         root.getChildren().setAll(grid);
         // Do some validation (using the Java 8 lambda syntax).
-        username.textProperty().addListener((observable, oldValue, newValue) ->
-        {
-            loginButton.setDisable(newValue.trim().isEmpty());
-        });
+        username.textProperty().addListener((observable, oldValue, newValue) -> loginButton.setDisable(newValue.trim().isEmpty()));
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -75,6 +73,7 @@ public class LoginPage2 extends Application {
             userPreferences = getCredentialsFromFile();
             username.setText(userPreferences.getUserName());
             password.setText(getPassword(userPreferences.getCredentials()));
+            password.textProperty().addListener((observable, oldValue, newValue) -> userPreferences.setCredentials(newValue));
             loginButton.setDisable(false);
             saveCredentials.setVisible(false);
         }
@@ -91,9 +90,9 @@ public class LoginPage2 extends Application {
 
             Thread thread1 = new Thread(() -> {
                 progressIndicator.setVisible(true);
-                int code = basicAuthorization();
+                Pair<String, String> code= basicAuthorization();
                 Platform.runLater(() -> {
-                    if (code == 200) {
+                    if (code.getKey().equals("200")) {
                         if (saveCredentials.isSelected()){
                             try {
                                 FileReader.saveUserPreferences(userPreferences);
@@ -108,7 +107,7 @@ public class LoginPage2 extends Application {
                             e.printStackTrace();
                         }
                     } else{
-                        new Alert(Alert.AlertType.INFORMATION, "Code " + String.valueOf(code)).show();
+                        new Alert(Alert.AlertType.INFORMATION, "Can't login because of " + code).show();
                     }
                 });
 

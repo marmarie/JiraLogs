@@ -20,12 +20,13 @@ import java.util.concurrent.CompletableFuture;
  * Created by Ali on 12.12.2016.
  */
 public class LogMonthContent {
-    Button logWork = new Button("Log Work");
-    GridPane grid= new GridPane();
+
+    private Button logWork = new Button("Log Work");
+    private GridPane grid= new GridPane();
     private DatePicker checkInDatePicker = new DatePicker();
     private DatePicker checkInEndDatePicker = new DatePicker();
 
-    TextField taskName = new TextField(){
+    private TextField taskName = new TextField(){
         @Override
         public void replaceText(int start, int end, String text) {
             if (Helper.isCorrectInputForTaskId(taskName.getText(),text)) {

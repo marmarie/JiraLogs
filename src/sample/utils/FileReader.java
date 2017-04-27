@@ -82,14 +82,16 @@ public class FileReader {
 
     public static void saveUserPreferences(UserPreferences userPreferences){
         File file = getFile();
+        ObjectMapper objectMapper = new ObjectMapper();
         try {
             if(file.createNewFile()) {
                 System.out.println("New file was created");
-                ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.writeValue(file, userPreferences);
             }
-            else
+            else {
                 System.out.println("File already exists");
+            }
+
         } catch (IOException e) {
             Logger.getAnonymousLogger().log(WARNING, e.getMessage());
         }

@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import sample.utils.FileReader;
 import structure.model.UserPreferences;
 
@@ -29,8 +30,8 @@ import static sample.utils.TestHttp.basicAuthorization;
  */
 public class LoginPage3 extends Application {
 
-    static UserPreferences userPreferences = new UserPreferences();
-    Integer result;
+    private static UserPreferences userPreferences = new UserPreferences();
+    private Integer result;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -84,28 +85,30 @@ public class LoginPage3 extends Application {
             userPreferences = getCredentialsFromFile();
             username.setText(userPreferences != null ? userPreferences.getUserName() : null);
             password.setText(getPassword(userPreferences.getCredentials()));
+
             loginButton.setDisable(false);
             saveCredentials.setVisible(false);
         }
         loginButton.setOnAction((ActionEvent event) -> {
-            Logger.getAnonymousLogger().log(Level.INFO, "jdjddjd");
-
+            password.textProperty().addListener((observable, oldValue, newValue) -> {
+                userPreferences.setCredentials(encodeCredentials(username.getText() + ":" + password.getText()));
+                FileReader.saveUserPreferences(userPreferences);});
             progressIndicator.setVisible(true);
 
             loginButton.setDisable(true);
             userPreferences.setUserName(username.getText());
-            Logger.getAnonymousLogger().log(Level.INFO, "saved to UP" + username.getText());
+            Logger.getAnonymousLogger().log(Level.INFO, "saved to UP " + username.getText());
             userPreferences.setCredentials(encodeCredentials(username.getText() + ":" + password.getText()));
             Logger.getAnonymousLogger().log(Level.INFO, "Set credentials");
 
                 CompletableFuture.supplyAsync(() -> {
-                    Logger.getAnonymousLogger().log(Level.INFO, "supplyAsync");
-                        result = basicAuthorization();
+                  Pair<String,String> result = basicAuthorization();
+                     //   result = basicAuthorization();
                         Logger.getAnonymousLogger().log(Level.INFO, "basic Authorization");
                         progressIndicator.setVisible(false);
 
                     Platform.runLater(() -> {
-                        if (result == 200) {
+                        if (result.getKey().equals("200")) {
                             if (saveCredentials.isSelected()){
                                 try {
                                     FileReader.saveUserPreferences(userPreferences);
@@ -120,7 +123,7 @@ public class LoginPage3 extends Application {
                                 Logger.getAnonymousLogger().log(Level.INFO, e.getMessage());
                             }
                         } else{
-                            new Alert(Alert.AlertType.INFORMATION, "Code " + String.valueOf(result)).show();
+                            new Alert(Alert.AlertType.INFORMATION, "Can't login because of " + result).show();
                         }
                     });
                     loginButton.setDisable(false);

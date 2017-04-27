@@ -23,9 +23,7 @@ public class UserPreferences {
 
     public void setEmail(String email) { this.email = email;}
 
-    public String getCredentials() {
-        return credentials;
-    }
+    public String getCredentials() {return credentials;}
 
     public void setCredentials(String credentials) {
         this.credentials = credentials;

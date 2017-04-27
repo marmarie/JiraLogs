@@ -4,14 +4,14 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.util.Callback;
 import sample.utils.Helper;
 import sample.utils.TestHttp;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -20,7 +20,8 @@ import java.util.concurrent.CompletableFuture;
  */
 public class LogDaysContent {
 
-    ComboBox<String> taskNames = new ComboBox<>();
+    private ComboBox<String> taskNames = new ComboBox<>();
+    private DatePicker customDatePicker = new DatePicker();
 
 
 //    TextField taskName = new TextField(){
@@ -48,11 +49,11 @@ public class LogDaysContent {
             }
         }
     };
-    Button logWork = new Button("Log Work");
-    Button logTodayTasks = new Button("Do it!");
-    Label logTasks = new Label("Or you can log all tasks you've been working on today");
-    GridPane grid= new GridPane();
-    int i = 5;
+    private Button logWork = new Button("Log Work");
+    private Button logTodayTasks = new Button("Do it!");
+    private Label logTasks = new Label("Or you can log all tasks you've been working on today");
+    private GridPane grid= new GridPane();
+    private int i = 5;
 
     public void logTime(){
         logWork.setOnAction((ActionEvent event) -> {
@@ -111,10 +112,13 @@ public class LogDaysContent {
         grid.add(taskNames, 1, 0);
         grid.add(new Label("Time:  "), 0, 1);
         grid.add(taskTime, 1, 1);
-        grid.add(logWork, 1, 2);
-        grid.add(logTasks,1,4);
+        grid.add(new Label("Choose date: "), 0,2);
+        grid.add(customDatePicker,1,2);
+        grid.add(logWork, 1, 3);
+        grid.add(logTasks,1,5);
+
         logTasks.setMinWidth(100);
-        grid.add(logTodayTasks,4,4);
+        grid.add(logTodayTasks,4,5);
     }
 
     private boolean isCorrectSymbol(String symbol){
@@ -130,6 +134,7 @@ public class LogDaysContent {
         logWork.setDisable(true);
         setTaskNames();
         taskTime.setPromptText("e.g. 1d 1h 1m");
+        calendarWork();
         enableLogWork();
         logTime();
         logTasks();
@@ -154,12 +159,32 @@ public class LogDaysContent {
                 logWork.setDisable(true);
         });
 
-
         taskTime.setOnKeyTyped(event -> {
             if(Helper.isCorrectTaskId(taskNames.getValue())&&!taskTime.getText().isEmpty())
                 logWork.setDisable(false);
             else
                 logWork.setDisable(true);
         });
+    }
+
+    public void calendarWork(){
+        customDatePicker.setValue(LocalDate.now());
+        final Callback<DatePicker, DateCell> dayCellFactory =
+                new Callback<DatePicker, DateCell>() {
+                    @Override
+                    public DateCell call(final DatePicker datePicker) {
+                        return new DateCell() {
+                            @Override
+                            public void updateItem(LocalDate item, boolean empty) {
+                                super.updateItem(item, empty);
+                                if (item.isBefore(LocalDate.now().minusDays(41)) || item.isAfter(LocalDate.now())) {
+                                    setDisable(true);
+                                    setStyle("-fx-background-color: #ffc0cb;");
+                                }
+                            }
+                        };
+                    }
+                };
+        customDatePicker.setDayCellFactory(dayCellFactory);
     }
 }

@@ -3,6 +3,7 @@ package sample.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import javafx.util.Pair;
 import org.apache.http.HttpRequest;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -230,19 +231,19 @@ public class TestHttp  {
     }
 
 
-    public static int basicAuthorization() {
+    public static Pair<String,String> basicAuthorization() {
         putCredentials();
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             HttpGet request = new HttpGet("http://jira.ringcentral.com");
             putHeadersInRequest(request, headersMap);
             try (CloseableHttpResponse response = client.execute(request)) {
-                return response.getStatusLine().getStatusCode();
+                return new Pair<>(String.valueOf(response.getStatusLine().getStatusCode()), response.getStatusLine().getReasonPhrase());
             }
         }
         catch (Exception ex) {
             Logger.getAnonymousLogger().log(WARNING, ex.getMessage());
         }
-        return 0;
+        return new Pair<>("0", "");
     }
 
 

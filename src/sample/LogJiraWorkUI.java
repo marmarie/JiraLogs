@@ -49,7 +49,6 @@ import java.util.logging.Logger;
         Scene scene = new Scene(root, 1000, 900, Color.WHITE);
 
         TabPane tabPane = new TabPane();
-
         BorderPane borderPane = new BorderPane();
 
         Tab tabD = getTabDays("Log days");
@@ -142,7 +141,6 @@ import java.util.logging.Logger;
         return tabD;
     }
 
-
     /**
      * Shows the application stage and ensures that it is brought ot the front of all stages.
      */
@@ -152,8 +150,6 @@ import java.util.logging.Logger;
             this.primaryStage.toFront();
         }
     }
-
-
 
     public static void main(String... args) {
         launch(args);

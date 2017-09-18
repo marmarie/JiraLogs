@@ -31,7 +31,6 @@ import static sample.utils.TestHttp.basicAuthorization;
 public class LoginPage3 extends Application {
 
     private static UserPreferences userPreferences = new UserPreferences();
-    private Integer result;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -89,10 +88,12 @@ public class LoginPage3 extends Application {
             loginButton.setDisable(false);
             saveCredentials.setVisible(false);
         }
+
         loginButton.setOnAction((ActionEvent event) -> {
-            password.textProperty().addListener((observable, oldValue, newValue) -> {
+
                 userPreferences.setCredentials(encodeCredentials(username.getText() + ":" + password.getText()));
-                FileReader.saveUserPreferences(userPreferences);});
+                FileReader.saveUserPreferences(userPreferences);
+
             progressIndicator.setVisible(true);
 
             loginButton.setDisable(true);

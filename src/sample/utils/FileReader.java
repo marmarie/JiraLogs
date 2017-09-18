@@ -89,13 +89,18 @@ public class FileReader {
                 objectMapper.writeValue(file, userPreferences);
             }
             else {
-                System.out.println("File already exists");
+            if(!getCredentialsFromFile().getCredentials().equals(userPreferences.getCredentials()))
+                objectMapper.writeValue(file, userPreferences);
             }
 
         } catch (IOException e) {
             Logger.getAnonymousLogger().log(WARNING, e.getMessage());
         }
     }
+
+
+
+
 
     public static UserPreferences getCredentialsFromFile() {
         ObjectMapper objectMapper = new ObjectMapper();

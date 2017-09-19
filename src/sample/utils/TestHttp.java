@@ -2,10 +2,8 @@ package sample.utils;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
 import javafx.util.Pair;
 import org.apache.http.HttpRequest;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -20,7 +18,6 @@ import sample.LoginPage3;
 import structure.JiraIssue;
 import structure.model.Entries;
 import structure.model.Result;
-import structure.model.UserPreferences;
 import structure.model.Worklog;
 
 import java.io.BufferedReader;
@@ -31,14 +28,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.logging.Level;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.logging.Logger;
 
-import static com.jayway.jsonpath.JsonPath.*;
 import static com.jayway.jsonpath.JsonPath.read;
 import static java.util.logging.Level.FINE;
-import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.WARNING;
 import static sample.utils.Helper.*;
 
@@ -100,7 +97,7 @@ public class TestHttp  {
         for(String dateIssue : jiraIssue.getWorkLogs().keySet()) {
             String time = jiraIssue.getWorkLogs().get(dateIssue);
             System.out.println("log to "+jiraIssue.getId()+" date = " +dateIssue +" time to log="+ time);
-            makePost(headersMap, "https://jira.ringcentral.com/rest/api/latest/issue/" + jiraIssue.getId() + "/worklog", makeJSON(dateIssue+"T15:01:00.000+0000", time+"s"));
+            makePost(headersMap, "https://jira.ringcentral.com/rest/api/latest/issue/" + jiraIssue.getId() + "/worklog", makeJSON(dateIssue+"+0000", time+"s"));
         }
     }
 
@@ -147,6 +144,26 @@ public class TestHttp  {
         return hashMap;
     }
 
+
+    public static HashMap<String, String> getWorklogForUser(String userName) {
+        HashMap<String, String> hashMap = new HashMap<>();
+        String json = getJsonByUser(30, userName);
+        net.minidev.json.JSONArray worklogs =  read(json, "$.worklog[*]");
+        for(Object worklog : worklogs) {
+            JSONObject task = new JSONObject((LinkedHashMap<String, String>) worklog);
+            String summary = task.get("key") +" " + task.get("summary");
+            Double totalTime = Double.parseDouble(String.valueOf( getSumTime(read(worklog, "$.entries[*].timeSpent"))))/3600;
+            hashMap.put(summary, totalTime + "h");
+        }
+        return hashMap;
+    }
+
+
+
+    public static Integer getSumTime(ArrayList<Integer> worklogTime){
+      return   worklogTime.stream().mapToInt(Integer::intValue).sum();
+    }
+
     public static HashMap<String, String> getLogWork(LocalDate startDate, LocalDate endDate) {
         HashMap<String, String> hashMap = new HashMap<>();
         int days = (int) ChronoUnit.DAYS.between(startDate, LocalDate.now());
@@ -174,10 +191,17 @@ public class TestHttp  {
         return hashMap;
     }
 
-    private static String getJson(int days) {
+    public static String getJson(int days) {
         putCredentials();
         return post(headersMap, "https://jira.ringcentral.com/rest/timesheet-gadget/1.0/raw-timesheet.json?targetUser=" + getUserName(LoginPage3.getUserPreferences().getCredentials()) + "&startDate=" + getDate(days));
     }
+
+    public static String getJsonByUser(int days, String userName) {
+        putCredentials();
+        return post(headersMap, "https://jira.ringcentral.com/rest/timesheet-gadget/1.0/raw-timesheet.json?targetUser=" + userName + "&startDate=" + getDate(days));
+    }
+
+
 
     private static String getTasksJSON(){
         putCredentials();
@@ -301,9 +325,10 @@ public class TestHttp  {
 
 
  public static void main(String...args){
-         getIssuesForToday();
- }
+     TestHttp.logWork(Helper.getIssue("AUT-10223", "2m"));
 
+  //   makePost(headersMap, "https://jira.ringcentral.com/rest/api/latest/issue/" + "AUT-10223" + "/worklog", makeJSON(LocalDateTime.now().toString() + "+0000", 60+"s"));
+ }
 
 
 

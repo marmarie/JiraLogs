@@ -99,7 +99,7 @@ public class LogMonthContent {
         System.out.println(dateAndLogTime.toString());
         JiraIssue issueToLog = TestHttp.getIssueListForLog(basicIssue,dateAndLogTime,localDate,localEndDate );
         System.out.println(issueToLog.getWorkLogs());
-        //TestHttp.logWork(cred,issueToLog);
+        TestHttp.logWork(issueToLog);
     }
 
     public void logTime(){

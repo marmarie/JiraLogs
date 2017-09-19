@@ -100,7 +100,7 @@ public class TestHttp  {
         for(String dateIssue : jiraIssue.getWorkLogs().keySet()) {
             String time = jiraIssue.getWorkLogs().get(dateIssue);
             System.out.println("log to "+jiraIssue.getId()+" date = " +dateIssue +" time to log="+ time);
-            makePost(headersMap, "https://jira.ringcentral.com/rest/api/latest/issue/" + jiraIssue.getId() + "/worklog", makeJSON(dateIssue+"T15:01:00.000+0000", time+"s"));
+            makePost(headersMap, "https://jira.ringcentral.com/rest/api/latest/issue/" + jiraIssue.getId() + "/worklog", makeJSON(dateIssue+"+0000", time+"s"));
         }
     }
 

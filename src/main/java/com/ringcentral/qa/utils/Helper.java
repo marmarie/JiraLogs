@@ -96,7 +96,7 @@ public class Helper {
         return daysOff.contains(localEndDate.getDayOfWeek().toString().toLowerCase());
     }
 
-    private static boolean isDateOFF(Calendar calendar) {
+    public static boolean isDateOFF(Calendar calendar) {
         SimpleDateFormat format = new SimpleDateFormat("EEEE", Locale.ENGLISH);
         String day = format.format(calendar.getTime());
         return daysOff.contains(day.toLowerCase());

@@ -17,6 +17,7 @@ import javafx.util.Duration;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -98,11 +99,15 @@ public class LogTodayAuto {
                                         t = t.subtract(duration);
                                         if(t.toSeconds()==0){
                                             t = Duration.valueOf(86400+"s");
-                                            stringProperty.set("Log!");
-                                            CompletableFuture.supplyAsync(() -> {
-                                                TestHttp.logWork(Helper.getIssue(taskName.getText(),"8h"));
-                                                return 0;
-                                        });
+                                            if(!Helper.isDateOFF(Calendar.getInstance())){
+                                                stringProperty.set("Log!");
+                                                CompletableFuture.supplyAsync(() -> {
+                                                    TestHttp.logWork(Helper.getIssue(taskName.getText(),"8h"));
+                                                    return 0;
+                                                });
+                                            }else {
+                                                stringProperty.set("Day off!");
+                                            }
                                         }
                                         else {
                                             autoLogTime[0] = LocalTime.ofSecondOfDay((long) t.toSeconds());

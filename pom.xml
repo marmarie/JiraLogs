@@ -57,7 +57,11 @@
             <artifactId>mail</artifactId>
             <version>1.4.7</version>
         </dependency>
-
+            <dependency>
+                <groupId>com.google.api-client</groupId>
+                <artifactId>google-api-client</artifactId>
+                <version>1.23.0</version>
+            </dependency>
     </dependencies>
 
     <build>
@@ -72,6 +76,8 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+
+
 
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>

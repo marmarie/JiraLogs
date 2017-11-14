@@ -80,6 +80,55 @@ public class TestHttp  {
         return f;
     }
 
+
+    public static HashMap<String, String> getAQAactivityForWeek(){
+        putCredentials();
+        String json = post(headersMap, "https://jira.ringcentral.com/rest/api/2/search?jql=assignee%20in%20(nadiia.shykiranska%2C%20daria.kolesnikova%2C%20mariya.azoyan%2C%20pavlo.kravchenko%2C%20artyom.rozhkov)%20AND%20updatedDate%20%3E%20startOfDay(-7d)&fields=summary,key");
+        List<String> keys =   read(json, "$.issues[*].key");
+        List<String> summaries = read(json, "$.issues[*].fields[*]");
+        HashMap<String, String> allList = new LinkedHashMap<>();
+        int i=0;
+        for (String key : keys){
+            String link = "=HYPERLINK(\"https://jira.ringcentral.com/browse/"+ key + "\";\""+ key + ": " + summaries.get(i++)+"\")";
+            allList.put(key ,link );
+        }
+        return allList;
+    }
+
+
+
+
+
+    public static String getJsonByUser(int days, String userName) {
+        putCredentials();
+        return post(headersMap, "https://jira.ringcentral.com/rest/timesheet-gadget/1.0/raw-timesheet.json?targetUser=" + userName + "&startDate=" + getDate(days));
+    }
+
+    public static Integer getSumTime(ArrayList<Integer> worklogTime){
+        return   worklogTime.stream().mapToInt(Integer::intValue).sum();
+    }
+
+
+
+    public static HashMap<String, String> getWorklogForUser(String userName) {
+        HashMap<String, String> hashMap = new HashMap<>();
+        String json = getJsonByUser(30, userName);
+        net.minidev.json.JSONArray worklogs =  read(json, "$.worklog[*]");
+        for(Object worklog : worklogs) {
+            JSONObject task = new JSONObject((LinkedHashMap<String, String>) worklog);
+            String summary = null;
+            try {
+                summary = task.get("key") +" " + task.get("summary");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Double totalTime = Double.parseDouble(String.valueOf( getSumTime(read(worklog, "$.entries[*].timeSpent"))))/3600;
+            hashMap.put(summary, totalTime + "h");
+        }
+        return hashMap;
+    }
+
+
     private static boolean makePost(HashMap<String, String> headers, String url, JSONObject json) {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             HttpPost request = new HttpPost(url);
@@ -166,8 +215,9 @@ public class TestHttp  {
                     if (hashMap.containsKey(date.toString())) {
                         String fullDate = String.valueOf(Long.valueOf(hashMap.get(date.toString())) + Long.valueOf(entry.getTimeSpent()));
                         hashMap.put(date.toString(), fullDate);
-                    } else
+                    } else {
                         hashMap.put(date.toString(), entry.getTimeSpent());
+                    }
                 }
             }
         }
@@ -301,7 +351,8 @@ public class TestHttp  {
 
 
  public static void main(String...args){
-         getIssuesForToday();
+       //  getIssuesForToday();
+     getAQAactivityForWeek();
  }
 
 
